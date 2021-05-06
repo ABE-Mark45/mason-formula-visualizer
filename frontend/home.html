@@ -15,6 +15,10 @@
         padding: 20px;
       }
   </style>
+  <script type="text/javascript" src="index.js"></script>
+  <script type="text/javascript" src="https://visjs.github.io/vis-network/standalone/umd/vis-network.min.js"></script>
+  <link href="vis/dist/vis.min.css" rel="stylesheet" type="text/css" />
+ 
 </head>
 
 <body>
@@ -30,9 +34,9 @@
 
       <form class="row gy-2 gx-3 align-items-center">
         <br>
-        <div class="col-auto">
+        <!--<div class="col-auto">
           <input type="text" class="form-control" id="autoSizingInput" placeholder="Node Label">
-        </div>
+        </div>-->
         <div class="col-auto">
           <button type="submit" class="btn btn-primary">add node</button>
         </div>
@@ -40,26 +44,27 @@
       <form class="row gy-2 gx-3 align-items-center">
         <br>
         <div class="col-auto">
-          <input type="text" class="form-control" id="autoSizingInput" placeholder="edge from">
+          <input type="text" class="form-control" id="edgeFrom" placeholder="edge from">
         </div>
         <div class="col-auto">
           <div class="input-group">
-            <input type="text" class="form-control" id="autoSizingInputGroup" placeholder="edge to">
+            <input type="text" class="form-control" id="edgeTo" placeholder="edge to">
           </div>
         </div>
         <div class="col-auto">
           <div class="input-group">
-            <input type="text" class="form-control" id="autoSizingInputGroup" placeholder="edge value">
+            <input type="text" class="form-control" id="value" placeholder="edge value">
           </div>
         </div>
         <div class="col-auto">
-          <button type="submit" class="btn btn-primary">add edge</button>
+          <button type="submit" class="btn btn-primary" onclick="addEdge()">add edge</button>
         </div>
       </form>
 
     </div>
     <div class="col">
       Graph Goes Here
+      <div id="mynetwork"></div>
     </div>
   </div>
   <br>
@@ -67,6 +72,36 @@
     Final result goes here
   </div>
 </div>
+<script>
+  var container = document.getElementById("mynetwork");
+ var dot =
+"dinetwork {node[shape=circle]; 1 -> 1;1 -> 2 -> 3; 2 -> 3; 2 -> 4; 2 -> 1;5 }";
+var data = vis.parseDOTNetwork(dot);
+var network = new vis.Network(container, data);
+  
+  var dot="dinetwork {node[shape=circle]; }";
+  
+  var counter=0;
+  methods=new Method();
+ function addEdge(){
+   var from =getElementById(edgeFrom)
+   var To =getElementById(edgeTo)
+   var value=getElementById(value)
+   if(methods.checkAvailability(from,To,value)){
+     data[from][To]=value;
+     dot=methods.adjustDot(from ,To)   
+   }
+   else{
+     alert("invalid path")
+   }
+ }
+ function addNode(){
+  dot=methods.appendDot(counter,dot);
+  counter++;
+ }
+
+
+</script>
 </body>
 
 </html>
