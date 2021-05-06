@@ -17,7 +17,6 @@
   </style>
   <script type="text/javascript" src="index.js"></script>
   <script type="text/javascript" src="https://visjs.github.io/vis-network/standalone/umd/vis-network.min.js"></script>
-  <link href="vis/dist/vis.min.css" rel="stylesheet" type="text/css" />
  
 </head>
 
@@ -38,7 +37,7 @@
           <input type="text" class="form-control" id="autoSizingInput" placeholder="Node Label">
         </div>-->
         <div class="col-auto">
-          <button type="submit" class="btn btn-primary">add node</button>
+          <button type="button" class="btn btn-primary" onclick="addNode()">add node</button>
         </div>
       </form>
       <form class="row gy-2 gx-3 align-items-center">
@@ -57,7 +56,7 @@
           </div>
         </div>
         <div class="col-auto">
-          <button type="submit" class="btn btn-primary" onclick="addEdge()">add edge</button>
+          <button type="button"  class="btn btn-primary" onclick="addEdge()">add edge</button>
         </div>
       </form>
 
@@ -73,31 +72,38 @@
   </div>
 </div>
 <script>
-  var container = document.getElementById("mynetwork");
- var dot =
-"dinetwork {node[shape=circle]; 1 -> 1;1 -> 2 -> 3; 2 -> 3; 2 -> 4; 2 -> 1;5 }";
-var data = vis.parseDOTNetwork(dot);
-var network = new vis.Network(container, data);
   
-  var dot="dinetwork {node[shape=circle]; }";
-  
+  var dot="dinetwork {node[shape=circle] }";
+ var data=[[]] 
   var counter=0;
   methods=new Method();
  function addEdge(){
-   var from =getElementById(edgeFrom)
-   var To =getElementById(edgeTo)
-   var value=getElementById(value)
-   if(methods.checkAvailability(from,To,value)){
+   var from =document.getElementById("edgeFrom").value;
+   var To =document.getElementById("edgeTo").value;
+   var value=document.getElementById("value").value;
+   if(methods.checkAvailability(from,To,counter)){
      data[from][To]=value;
-     dot=methods.adjustDot(from ,To)   
+     dot=methods.adjustDot(from ,To,dot)
+     draw(dot);   
    }
    else{
      alert("invalid path")
    }
  }
  function addNode(){
+  console.log(dot);
   dot=methods.appendDot(counter,dot);
   counter++;
+  console.log(dot);
+  console.log(counter);
+  //call draw
+  draw(dot);
+ }
+ function draw(dotElement){
+   console.log(dotElement)
+  var container = document.getElementById("mynetwork");
+  var data = vis.parseDOTNetwork(dotElement);
+  var network = new vis.Network(container, data);
  }
 
 
