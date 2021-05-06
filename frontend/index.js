@@ -10,6 +10,7 @@ var nodes=[]
   }
   appendDot(counter,dot){
     dot.concat();
+    //remove last char } then concat new node counter;} to dot 
   }
 
 }
