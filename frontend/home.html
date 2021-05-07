@@ -89,62 +89,73 @@
       Final result goes here
     </div>
   </div>
-  <script>
+  <br>
+  <div class="container" style="text-align:center">
+    Final result goes here
+  </div>
+</div>
+<script>
+  
+ // var dot="'digraph {node[shape=circle] ';+' ahs -> box[label="box", arrowhead=box]; \n'}";
+ var dot="digraph {\n" +
+  
+  ' '+"}";
+  var container = document.getElementById("mynetwork");
+  var data = vis.parseDOTNetwork(dot);
+  var network = new vis.Network(container, data);
+ var data=[[]] 
+  var counter=0;
+  methods=new Method();
+  graph=new Graph();
+ 
+  function addEdge(){
+   var from =document.getElementById("edgeFrom").value;
+   var To =document.getElementById("edgeTo").value;
+   var value=document.getElementById("value").value;
+   if(methods.checkAvailability(from,To,dot)){
+     graph.add_edge(from,To,value)
+     dot=methods.adjustDot(from ,To,dot,value)
+     draw(dot);   
+   }
+   else{
+     alert("invalid path")
+   }
+ }
+ function deleteEdge(){
+  var from =document.getElementById("edgeDeleteFrom").value;
+   var To =document.getElementById("edgeDeleteTo").value;
+   dot=methods.deleteEdgeFromDot(from,To,dot);
+   graph.remove_edge(from,To)
+   draw(dot);
+ }
+ function deleteNode(){
+  var node=document.getElementById("nodeToDelete").value;
+  dot=methods.deleteNodeFromDot(dot,node);
+  graph.remove_node(node)
+  draw(dot);
+ }
+ function addNode(){
+  console.log(dot);
+  dot=methods.appendDot(counter,dot);
+  graph.add_node(counter)
+  counter++;
+  console.log(dot);
+  console.log(counter);
+  //call draw
+  draw(dot);
+ }
+ function draw(dotElement){
+   console.log(dotElement)
+  var container = document.getElementById("mynetwork");
+  var data = vis.parseDOTNetwork(dotElement);
+  var network = new vis.Network(container, data);
+ }
+function solve(){
+  //call solving fn here
 
-    var dot = "dinetwork {node[shape=circle] }";
-    var data = [[]]
-    var counter = 0;
-    methods = new Method();
-    graph = new Graph();
+}
 
-    function addEdge() {
-      var from = document.getElementById("edgeFrom").value;
-      var To = document.getElementById("edgeTo").value;
-      var value = document.getElementById("value").value;
-      if (methods.checkAvailability(from, To, dot)) {
-        graph.add_edge(from, To, value)
-        dot = methods.adjustDot(from, To, dot)
-        draw(dot);
-      }
-      else {
-        alert("invalid path")
-      }
-    }
-    function deleteEdge() {
-      var from = document.getElementById("edgeDeleteFrom").value;
-      var To = document.getElementById("edgeDeleteTo").value;
-      dot = methods.deleteEdgeFromDot(from, To, dot);
-      graph.remove_edge(from, To)
-      draw(dot);
-    }
-    function deleteNode() {
-      var node = document.getElementById("nodeToDelete").value;
-      dot = methods.deleteNodeFromDot(dot, node);
-      graph.remove_node(node)
-      draw(dot);
-    }
-    function addNode() {
-      console.log(dot);
-      dot = methods.appendDot(counter, dot);
-      graph.add_node(counter)
-      counter++;
-      console.log(dot);
-      console.log(counter);
-      //call draw
-      draw(dot);
-    }
-    function draw(dotElement) {
-      console.log(dotElement)
-      var container = document.getElementById("mynetwork");
-      var data = vis.parseDOTNetwork(dotElement);
-      var network = new vis.Network(container, data);
-    }
-    function solve() {
-      //call solving fn here
-
-    }
-
-  </script>
+</script>
 </body>
 
 </html>
