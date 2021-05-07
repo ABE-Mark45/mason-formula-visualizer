@@ -7,19 +7,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
 
   <title>Mason Formula Solver</title>
   <style>
-      form {
-        padding: 20px;
-      }
+    form {
+      padding: 20px;
+    }
   </style>
 
   <script type="text/javascript" src="index.js"></script>
   <script type="text/javascript" src="./graph.js"></script>
   <script type="text/javascript" src="https://visjs.github.io/vis-network/standalone/umd/vis-network.min.js"></script>
- 
+
 </head>
 
 <body>
@@ -30,126 +31,133 @@
     </div>
   </nav>
   <div class="container">
-  <div class="row">
-    <div class="col">
+    <div class="row">
+      <div class="col py-4">
 
-      <form class="row gy-2 gx-3 align-items-center">
-        <br>
-        <div class="col-auto">
+        <!-- Add node -->
+        <div class="row mx-auto w-25">
           <button type="button" class="btn btn-primary" onclick="addNode()">add node</button>
         </div>
-      </form>
-      <form class="row gy-2 gx-3 align-items-center">
-        <br>
-        <div class="col-auto">
-          <input type="text" class="form-control" id="edgeFrom" placeholder="edge from">
-        </div>
-        <div class="col-auto">
-          <div class="input-group">
-            <input type="text" class="form-control" id="edgeTo" placeholder="edge to">
+
+        <!-- Add Edge -->
+        <form class="row mt-3 gy-2 gx-3 align-items-center">
+          <br>
+          <div class="col-auto">
+            <input type="text" class="form-control" id="edgeFrom" placeholder="edge from">
           </div>
-        </div>
-        <div class="col-auto">
-          <div class="input-group">
-            <input type="text" class="form-control" id="value" placeholder="edge value">
+          <div class="col-auto">
+            <div class="input-group">
+              <input type="text" class="form-control" id="edgeTo" placeholder="edge to">
+            </div>
           </div>
-        </div>
-        <div class="col-auto">
-          <button type="button"  class="btn btn-primary" onclick="addEdge()">add edge</button>
-        </div>
-      </form>
-      <form class="row gy-2 gx-3 align-items-center">
-        <div class="col-auto">
-          <input type="text" class="form-control" id="nodeToDelete" placeholder="node to delete">
-        </div> 
-        <div class="col-auto">
-          <button type="button"  class="btn btn-primary" onclick="deleteNode()">delete Node</button>
-        </div>
-      </form>
-    <form class="row gy-2 gx-3 align-items-center">
-        <div class="col-auto">
-          <input type="text" class="form-control" id="edgeDeleteFrom" placeholder="edge from">
-        </div>
-        <div class="col-auto">
-          <div class="input-group">
-            <input type="text" class="form-control" id="edgeDeleteTo" placeholder="edge to">
+          <div class="col-auto">
+            <div class="input-group">
+              <input type="text" class="form-control" id="value" placeholder="edge value">
+            </div>
           </div>
+          <div class="col-auto">
+            <button type="button" class="btn btn-primary" onclick="addEdge()">add edge</button>
+          </div>
+        </form>
+
+        <!-- Delete Node -->
+        <form class="row mt-3 gy-2 gx-3 align-items-center border border-2 border-danger rounded">
+          <div class="col-auto">
+            <input type="text" class="form-control" id="nodeToDelete" placeholder="node to delete">
+          </div>
+          <div class="col-auto">
+            <button type="button" class="btn btn-primary" onclick="deleteNode()">delete Node</button>
+          </div>
+        </form>
+
+        <!-- Delete Edge -->
+        <form class="row mt-3 gy-2 gx-3 align-items-center border border-2 border-danger rounded">
+          <div class="col-auto">
+            <input type="text" class="form-control" id="edgeDeleteFrom" placeholder="edge from">
+          </div>
+          <div class="col-auto">
+            <div class="input-group">
+              <input type="text" class="form-control" id="edgeDeleteTo" placeholder="edge to">
+            </div>
+          </div>
+          <div class="col-auto">
+            <button type="button" class="btn btn-primary" onclick="deleteEdge()">delete edge</button>
+          </div>
+
+        </form>
+
+        <!-- Solve -->
+        <div class="row mt-3 mx-auto w-25">
+          <button type="button" class="btn btn-primary" onclick="solve()">Solve</button>
         </div>
-        <div class="col-auto">
-          <button type="button"  class="btn btn-primary" onclick="deleteEdge()">delete edge</button>
-        </div>
-        
-      </form>
-      <div class="col-auto">
-        <button type="button"  class="btn btn-primary" onclick="solve()">Solve</button>
+      </div>
+
+
+      <div class="col">
+        <div id="mynetwork" class="my-5 h-75 border border-dark rounded"> </div>
       </div>
     </div>
-    <div class="col">
-      Graph Goes Here
-      <div id="mynetwork"></div>
+    <br>
+    <div class="container" style="text-align:center">
+      Final result goes here
     </div>
   </div>
-  <br>
-  <div class="container" style="text-align:center">
-    Final result goes here
-  </div>
-</div>
-<script>
-  
-  var dot="dinetwork {node[shape=circle] }";
- var data=[[]] 
-  var counter=0;
-  methods=new Method();
-  graph=new Graph();
- 
-  function addEdge(){
-   var from =document.getElementById("edgeFrom").value;
-   var To =document.getElementById("edgeTo").value;
-   var value=document.getElementById("value").value;
-   if(methods.checkAvailability(from,To,dot)){
-     graph.add_edge(from,To,value)
-     dot=methods.adjustDot(from ,To,dot)
-     draw(dot);   
-   }
-   else{
-     alert("invalid path")
-   }
- }
- function deleteEdge(){
-  var from =document.getElementById("edgeDeleteFrom").value;
-   var To =document.getElementById("edgeDeleteTo").value;
-   dot=methods.deleteEdgeFromDot(from,To,dot);
-   graph.remove_edge(from,To)
-   draw(dot);
- }
- function deleteNode(){
-  var node=document.getElementById("nodeToDelete").value;
-  dot=methods.deleteNodeFromDot(dot,node);
-  graph.remove_node(node)
-  draw(dot);
- }
- function addNode(){
-  console.log(dot);
-  dot=methods.appendDot(counter,dot);
-  graph.add_node(counter)
-  counter++;
-  console.log(dot);
-  console.log(counter);
-  //call draw
-  draw(dot);
- }
- function draw(dotElement){
-   console.log(dotElement)
-  var container = document.getElementById("mynetwork");
-  var data = vis.parseDOTNetwork(dotElement);
-  var network = new vis.Network(container, data);
- }
-function solve(){
-  //call solving fn here
+  <script>
 
-}
+    var dot = "dinetwork {node[shape=circle] }";
+    var data = [[]]
+    var counter = 0;
+    methods = new Method();
+    graph = new Graph();
 
-</script>
+    function addEdge() {
+      var from = document.getElementById("edgeFrom").value;
+      var To = document.getElementById("edgeTo").value;
+      var value = document.getElementById("value").value;
+      if (methods.checkAvailability(from, To, dot)) {
+        graph.add_edge(from, To, value)
+        dot = methods.adjustDot(from, To, dot)
+        draw(dot);
+      }
+      else {
+        alert("invalid path")
+      }
+    }
+    function deleteEdge() {
+      var from = document.getElementById("edgeDeleteFrom").value;
+      var To = document.getElementById("edgeDeleteTo").value;
+      dot = methods.deleteEdgeFromDot(from, To, dot);
+      graph.remove_edge(from, To)
+      draw(dot);
+    }
+    function deleteNode() {
+      var node = document.getElementById("nodeToDelete").value;
+      dot = methods.deleteNodeFromDot(dot, node);
+      graph.remove_node(node)
+      draw(dot);
+    }
+    function addNode() {
+      console.log(dot);
+      dot = methods.appendDot(counter, dot);
+      graph.add_node(counter)
+      counter++;
+      console.log(dot);
+      console.log(counter);
+      //call draw
+      draw(dot);
+    }
+    function draw(dotElement) {
+      console.log(dotElement)
+      var container = document.getElementById("mynetwork");
+      var data = vis.parseDOTNetwork(dotElement);
+      var network = new vis.Network(container, data);
+    }
+    function solve() {
+      //call solving fn here
+
+    }
+
+  </script>
 </body>
 
 </html>
