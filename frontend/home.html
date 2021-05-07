@@ -34,55 +34,42 @@
     <div class="row">
       <div class="col py-4">
 
+
+
+
         <!-- Add node -->
         <div class="row mx-auto w-25">
-          <button type="button" class="btn btn-primary" onclick="addNode()">add node</button>
+          <button type="button" class="btn btn-primary" onclick="addNode()">Add Node</button>
         </div>
+        <form class="row mt-3 gy-2 gx-3 align-items-center border border-2 border-success rounded">
 
-        <!-- Add Edge -->
-        <form class="row mt-3 gy-2 gx-3 align-items-center">
-          <br>
-          <div class="col-auto">
+
+
+          <!-- Add Edge -->
+          <div class="col-auto input-group">
             <input type="text" class="form-control" id="edgeFrom" placeholder="edge from">
-          </div>
-          <div class="col-auto">
-            <div class="input-group">
-              <input type="text" class="form-control" id="edgeTo" placeholder="edge to">
-            </div>
-          </div>
-          <div class="col-auto">
-            <div class="input-group">
-              <input type="text" class="form-control" id="value" placeholder="edge value">
-            </div>
-          </div>
-          <div class="col-auto">
-            <button type="button" class="btn btn-primary" onclick="addEdge()">add edge</button>
+            <input type="text" class="form-control" id="edgeTo" placeholder="edge to">
+            <input type="text" class="form-control" id="value" placeholder="edge value">
+            <button type="button" class="btn btn-primary" onclick="addEdge()">Add Edge</button>
           </div>
         </form>
 
         <!-- Delete Node -->
         <form class="row mt-3 gy-2 gx-3 align-items-center border border-2 border-danger rounded">
-          <div class="col-auto">
+          <div class="col-auto input-group">
             <input type="text" class="form-control" id="nodeToDelete" placeholder="node to delete">
-          </div>
-          <div class="col-auto">
-            <button type="button" class="btn btn-primary" onclick="deleteNode()">delete Node</button>
+            <button type="button" class="btn btn-primary" onclick="deleteNode()">Delete Node</button>
           </div>
         </form>
 
         <!-- Delete Edge -->
         <form class="row mt-3 gy-2 gx-3 align-items-center border border-2 border-danger rounded">
-          <div class="col-auto">
+          <div class="col-auto input-group">
             <input type="text" class="form-control" id="edgeDeleteFrom" placeholder="edge from">
+            <input type="text" class="form-control" id="edgeDeleteTo" placeholder="edge to">
+            <button type="button" class="btn btn-primary" onclick="deleteEdge()">Delete Edge</button>
           </div>
-          <div class="col-auto">
-            <div class="input-group">
-              <input type="text" class="form-control" id="edgeDeleteTo" placeholder="edge to">
-            </div>
-          </div>
-          <div class="col-auto">
-            <button type="button" class="btn btn-primary" onclick="deleteEdge()">delete edge</button>
-          </div>
+
 
         </form>
 
