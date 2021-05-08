@@ -32,12 +32,12 @@ class Graph {
     remove_node(removedNode) {
         delete this.adj_list[removedNode];
 
-        for (let from in this.adj_list)
-            this.adj_list[from].filter(edge => edge.to !== from);
+        for (let node in this.adj_list)
+            this.adj_list[node] = this.adj_list[node].filter(edge => edge.to !== removedNode);
+        
     }
-
     remove_edge(from, to) {
-        this.adj_list[from].filter(edge => edge.to !== to);
+        this.adj_list[from] = this.adj_list[from].filter(edge => edge.to !== to);
     }
 }
 
@@ -359,7 +359,7 @@ function generate_deltas(cycles, forward_paths, non_touching_loops) {
 function solve(graph)
 {
     let forward_paths = generate_forward_paths(graph);
-    console.log(forward_paths);
+
     let cycles = generate_cycles(graph);
 
     let cycles_conflicts = generate_cycles_conflicts(cycles);
@@ -422,8 +422,8 @@ g3.add_edge(7, 3, 'k');
 g3.add_edge(8, 6, 'l');
 g3.add_edge(8, 2, 'm');
 
-
-let test_cases = [g1, g2, g3];
+/*
+let test_cases = [g1];
 
 function testGraph(g)
 {
@@ -434,11 +434,11 @@ function testGraph(g)
 
     let cycles_conflicts = generate_cycles_conflicts(cycles);
     let non_touching_loops = generate_non_touching_cycle_groups(cycles, cycles_conflicts);
-    console.log('non_touching_loops: ', JSON.stringify(non_touching_loops));
+    console.log('non_touching_loops: ', non_touching_loops);
 
     let deltas = generate_deltas(cycles, fp, non_touching_loops);
-    console.log('deltas: ', JSON.stringify(deltas));
+    console.log('deltas: ', deltas);
     console.log('----------------------------------------------------');
 }
 
-test_cases.forEach(g => testGraph(g));
+test_cases.forEach(g => testGraph(g));*/

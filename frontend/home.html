@@ -83,140 +83,158 @@
       <div class="col">
         <div id="mynetwork" class="my-5 h-75 border border-dark rounded"> </div>
       </div>
-  <br>
-  <div class="container" style="text-align:left" id="solution">
-    <div class="container" style="text-align:left" id="forwardPath">
+      <br>
+      <div class="container" style="text-align:left" id="solution">
+        <div class="container" style="text-align:left" id="forwardPath">
+        </div>
+        <div class="container" style="text-align:center" id="individual">
+        </div>
+        <div class="container" style="text-align:right" id="nonTouching">
+        </div>
+      </div>
     </div>
-    <div class="container" style="text-align:center" id="individual">
-    </div>
-    <div class="container" style="text-align:right" id="nonTouching">
-    </div>
-  </div>
-</div>
-<script>
-  
- // var dot="'digraph {node[shape=circle] ';+' ahs -> box[label="box", arrowhead=box]; \n'}";
- var dot="digraph {\n" +
-  
-  ' '+"}";
-  var container = document.getElementById("mynetwork");
-  var data = vis.parseDOTNetwork(dot);
-  var network = new vis.Network(container, data);
- var data=[[]] 
-  var counter=0;
-  methods=new Method();
-  graph=new Graph();
- var loopsInString=[];
-  function addEdge(){
-   var from =document.getElementById("edgeFrom").value;
-   var To =document.getElementById("edgeTo").value;
-   var value=document.getElementById("value").value;
-   if(methods.checkAvailability(from,To,dot)){
-     graph.add_edge(from,To,value)
-     dot=methods.adjustDot(from ,To,dot,value)
-     draw(dot);   
-   }
-   else{
-     alert("invalid path")
-   }
- }
- function deleteEdge(){
-  var from =document.getElementById("edgeDeleteFrom").value;
-   var To =document.getElementById("edgeDeleteTo").value;
-   dot=methods.deleteEdgeFromDot(from,To,dot);
-   graph.remove_edge(from,To)
-   draw(dot);
- }
- function deleteNode(){
-  var node=document.getElementById("nodeToDelete").value;
-  dot=methods.deleteNodeFromDot(dot,node);
-  graph.remove_node(node)
-  draw(dot);
- }
- function addNode(){
-  console.log(dot);
-  dot=methods.appendDot(counter,dot);
-  graph.add_node(counter)
-  counter++;
-  console.log(dot);
-  console.log(counter);
-  //call draw
-  draw(dot);
- }
- function draw(dotElement){
-   console.log(dotElement)
-  var container = document.getElementById("mynetwork");
-  var data = vis.parseDOTNetwork(dotElement);
-  var network = new vis.Network(container, data);
- }
-function solveFlow(){
-  //call solving fn here
-  var data1= [[1, 2, 3, 4, 5, 6, 7, 8]
-,[1, 2, 3, 4, 5, 6, 8]
-  ,[1, 2, 3, 4, 7, 8]]; 
-  var data=[[5, 6, 5]
-, [6, 7, 8, 6]
-, [2, 3, 4, 5, 6, 7, 8, 2]
-, [3, 4, 5, 6, 7, 3]
-, [6, 8, 6]
-, [2, 3, 4, 5, 6, 8, 2]
-, [2, 3, 4, 7, 8, 2]
-,[3, 4, 7, 3]];
-var loopgroups=[[0, 6],[0, 7],[4, 7]]
+    <script>
 
-//remove the comment tag in production
-//data[2].shift() //remove individual loops
-  //data=solve(graph);
- renderForward(data1)
-  renderIndividualLoops(data);
-  renderNonTouchingLoops(loopgroups);
-  console.log(data1);
- 
-}
-function renderForward(data){
-  var counter=0
-  const html=data.map(node =>{
-    var holder="";
-    for (let i = 0; i < node.length; i++) {
-      holder=holder.concat(node[i]);
-    }
-    counter++;
-    return `<p>forward Path${counter}: ${holder}</p>`;
-  }).join("");
-  
-  document.querySelector("#forwardPath").insertAdjacentHTML("afterbegin",html);
-}
-function renderIndividualLoops(data){
-  var counter=0
-  const html=data.map(node =>{
-    var holder="";
-    for (let i = 0; i < node.length; i++) {
-      holder=holder.concat(node[i]);
-    }
-    loopsInString.push(holder);
-    counter++;
-    return `<p>loop ${counter}: ${holder}</p>`;
-  }).join("");
-  
-  document.querySelector("#individual").insertAdjacentHTML("afterbegin",html);
-}
-function renderNonTouchingLoops(loopgroups){
-  var counter=0
-  const html=loopgroups.map(group =>{
-    var holder="";
-    for (let i = 0; i < group.length; i++) {
-      holder=holder.concat(loopsInString[group[i]]+",");
-    }
-    counter++;
-    return `<p>non touching loop ${counter}: ${holder}</p>`;
-  }).join("");
-  
-  document.querySelector("#nonTouching").insertAdjacentHTML("afterbegin",html);
-}
+      // var dot="'digraph {node[shape=circle] ';+' ahs -> box[label="box", arrowhead=box]; \n'}";
+      var dot = "digraph {}";
+      var container = document.getElementById("mynetwork");
+      var data = vis.parseDOTNetwork(dot);
+      var network = new vis.Network(container, data);
+      var data = [[]]
+      var counter = 0;
+      methods = new Method();
+      graph = new Graph();
+      var loopsInString = [];
+      
+      function addEdge() {
+        var from = parseInt(document.getElementById("edgeFrom").value);
+        var to = parseInt(document.getElementById("edgeTo").value);
+        var value = document.getElementById("value").value;
+
+        if (!methods.validNodes([from, to])){
+          alert("Invalid Node(s)");
+          return;
+        }
+        
+        if (!methods.edgeExists(graph, from, to)) {
+          graph.add_edge(from, to, value)
+          draw();
+        }
+        else {
+          alert("Edge already exists")
+        }
+      }
+
+      function deleteEdge() {
+        var from = parseInt(document.getElementById("edgeDeleteFrom").value);
+        var to = parseInt(document.getElementById("edgeDeleteTo").value);
+
+        if (!methods.validNodes([from, to])){
+          alert("Invalid Node(s)");
+          return;
+        }
+
+        graph.remove_edge(from, To)
+        draw();
+      }
+      function deleteNode() {
+        var node = parseInt(document.getElementById("nodeToDelete").value);
+
+        if (!methods.validNodes([node])){
+          alert("Invalid Node(s)");
+          return;
+        }
+
+        graph.remove_node(node)
+        draw();
+
+      }
+      function addNode() {
+        graph.add_node(counter)
+        counter++;
+        draw()
+
+      }
+      function draw() {
+        dotElement = methods.renderDot(graph)
+        var container = document.getElementById("mynetwork");
+        var data = vis.parseDOTNetwork(dotElement);
+        var network = new vis.Network(container, data);
+      }
+      function solveFlow() {
+        /*
+        //call solving fn here
+        var data1 = [[1, 2, 3, 4, 5, 6, 7, 8]
+          , [1, 2, 3, 4, 5, 6, 8]
+          , [1, 2, 3, 4, 7, 8]];
+        var data = [[5, 6, 5]
+          , [6, 7, 8, 6]
+          , [2, 3, 4, 5, 6, 7, 8, 2]
+          , [3, 4, 5, 6, 7, 3]
+          , [6, 8, 6]
+          , [2, 3, 4, 5, 6, 8, 2]
+          , [2, 3, 4, 7, 8, 2]
+          , [3, 4, 7, 3]];
+        var loopgroups = [[0, 6], [0, 7], [4, 7]]
+        */
+        //remove the comment tag in production
+        //data[2].shift() //remove individual loops
+        let [forward_paths, cycles, non_touching_loops, deltas] = solve(graph);
+
+        console.log(forward_paths);
+        console.log(cycles);
+        console.log(non_touching_loops);
+        console.log(deltas);
+        renderForward(data1)
+        renderIndividualLoops(data);
+        renderNonTouchingLoops(loopgroups);
+        console.log(data1);
+
+      }
+      function renderForward(data) {
+        var counter = 0
+        const html = data.map(node => {
+          var holder = "";
+          for (let i = 0; i < node.length; i++) {
+            holder = holder.concat(node[i]);
+          }
+          counter++;
+          return `<p>forward Path${counter}: ${holder}</p>`;
+        }).join("");
+
+        document.querySelector("#forwardPath").insertAdjacentHTML("afterbegin", html);
+      }
+      function renderIndividualLoops(data) {
+        var counter = 0
+        const html = data.map(node => {
+          var holder = "";
+          for (let i = 0; i < node.length; i++) {
+            holder = holder.concat(node[i]);
+          }
+          loopsInString.push(holder);
+          counter++;
+          return `<p>loop ${counter}: ${holder}</p>`;
+        }).join("");
+
+        document.querySelector("#individual").insertAdjacentHTML("afterbegin", html);
+      }
+      function renderNonTouchingLoops(loopgroups) {
+        var counter = 0
+        const html = loopgroups.map(group => {
+          var holder = "";
+          for (let i = 0; i < group.length; i++) {
+            holder = holder.concat(loopsInString[group[i]] + ",");
+          }
+          counter++;
+          return `<p>non touching loop ${counter}: ${holder}</p>`;
+        }).join("");
+
+        document.querySelector("#nonTouching").insertAdjacentHTML("afterbegin", html);
+      }
 
 
 
-</script>
+    </script>
 </body>
 
 </html>
