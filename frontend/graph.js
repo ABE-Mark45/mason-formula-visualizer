@@ -373,53 +373,72 @@ function solve(graph)
 
 
 
-function testGraph() {
-    let g = new Graph();
+let g1 = new Graph();
 
-    for (let i = 1; i <= 8; i++)
-        g.add_node(i);
+for(let i = 0; i <= 6;i++)
+    g1.add_node(i);
 
-    g.add_edge(1, 2, 'a');
-    g.add_edge(2, 3, 'b');
-    g.add_edge(3, 4, 'c');
-    g.add_edge(4, 5, 'd');
-    g.add_edge(4, 7, 'e');
-    g.add_edge(5, 6, 'f');
-    g.add_edge(6, 5, 'g');
-    g.add_edge(6, 7, 'h');
-    g.add_edge(6, 8, 'i');
-    g.add_edge(7, 8, 'j');
-    g.add_edge(7, 3, 'k');
-    g.add_edge(8, 6, 'l');
-    g.add_edge(8, 2, 'm');
+g1.add_edge(0, 1, 1);
+g1.add_edge(1, 2, 5);
+g1.add_edge(1, 5, 10);
+g1.add_edge(2, 3, 10);
+g1.add_edge(3, 4, 2);
+g1.add_edge(3, 2, -1);
+g1.add_edge(4, 6, 1);
+g1.add_edge(4, 3, -2);
+g1.add_edge(4, 1, -1);
+g1.add_edge(5, 4, 2);
+g1.add_edge(5, 5, -1);
 
+let g2 = new Graph();
+
+for(let i = 1; i <= 5; i++)
+    g2.add_node(i);
+
+g2.add_edge(1, 2, 1);
+g2.add_edge(1, 3, 1);
+g2.add_edge(2, 3, 'G1');
+g2.add_edge(3, 4, 'G2');
+g2.add_edge(4, 3, '-H1');
+g2.add_edge(4, 2, '-H2');
+g2.add_edge(4, 5, 1);
+
+let g3 = new Graph();
+
+for (let i = 1; i <= 8; i++)
+    g3.add_node(i);
+
+g3.add_edge(1, 2, 'a');
+g3.add_edge(2, 3, 'b');
+g3.add_edge(3, 4, 'c');
+g3.add_edge(4, 5, 'd');
+g3.add_edge(4, 7, 'e');
+g3.add_edge(5, 6, 'f');
+g3.add_edge(6, 5, 'g');
+g3.add_edge(6, 7, 'h');
+g3.add_edge(6, 8, 'i');
+g3.add_edge(7, 8, 'j');
+g3.add_edge(7, 3, 'k');
+g3.add_edge(8, 6, 'l');
+g3.add_edge(8, 2, 'm');
+
+
+let test_cases = [g1, g2, g3];
+
+function testGraph(g)
+{
     let fp = generate_forward_paths(g);
-
-    console.log('forward path: ');
-    console.log(fp);
-
+    console.log('forward path: ', JSON.stringify(fp));
     let cycles = generate_cycles(g);
+    console.log('cycles: ', JSON.stringify(cycles));
 
-    console.table(cycles);
-    let transfers = cycles.map(cycle => get_transfer_function(g, cycle));
-    console.log(transfers)
-    let conflicts = generate_cycles_conflicts(cycles);
+    let cycles_conflicts = generate_cycles_conflicts(cycles);
+    let non_touching_loops = generate_non_touching_cycle_groups(cycles, cycles_conflicts);
+    console.log('non_touching_loops: ', JSON.stringify(non_touching_loops));
 
-    // console.table(conflicts);
-
-    let non_touching_loops = generate_non_touching_cycle_groups(cycles, conflicts);
-    console.log(non_touching_loops)
-    // non_touching_loops.forEach(container => {
-    //     container.forEach(loop_group => console.log(loop_group));
-    //     console.log('---------------');
-    // });
-
-    // non_touching_loops.forEach(container => {
-    //     container.forEach(loop_group => console.log(loop_group.generate_node_set(cycles)));
-    //     console.log('---------------');
-    // });
-
-    console.log(generate_deltas(cycles, fp, non_touching_loops));
+    let deltas = generate_deltas(cycles, fp, non_touching_loops);
+    console.log('deltas: ', JSON.stringify(deltas));
+    console.log('----------------------------------------------------');
 }
 
-testGraph();
+test_cases.forEach(g => testGraph(g));
