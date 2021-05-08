@@ -34,7 +34,7 @@ class Graph {
 
         for (let node in this.adj_list)
             this.adj_list[node] = this.adj_list[node].filter(edge => edge.to !== removedNode);
-        
+
     }
     remove_edge(from, to) {
         this.adj_list[from] = this.adj_list[from].filter(edge => edge.to !== to);
@@ -276,13 +276,11 @@ function get_transfer_function(g, path) {
     return transfer_array.join('*');
 }
 
-function get_loop_gains(g, cycles)
-{
+function get_loop_gains(g, cycles) {
     return cycles.map(cycle => math.simplify(get_transfer_function(g, cycle)).toString());
 }
 
-function get_forward_paths_gains(g, forward_paths)
-{
+function get_forward_paths_gains(g, forward_paths) {
     return forward_paths.map(path => math.simplify(get_transfer_function(g, path)).toString());
 }
 
@@ -347,7 +345,7 @@ or if delta_1 = delta_2 = 1, the function returns
 Please check all entries in each forward path container while alternating signs
 */
 function generate_deltas(cycles, forward_paths, non_touching_loops, loop_gains) {
-    let deltas = forward_paths.map(cur_forward_path => 
+    let deltas = forward_paths.map(cur_forward_path =>
         non_touching_loops.map(container =>
             container.filter(loop_group => {
                 let node_set = loop_group.generate_node_set(cycles);
@@ -364,73 +362,72 @@ function generate_deltas(cycles, forward_paths, non_touching_loops, loop_gains) 
 }
 
 
-function get_big_delta(non_touching_loops, loop_gains)
-{
+function get_big_delta(non_touching_loops, loop_gains) {
     let ans = '1';
 
     let negative = 1;
 
     non_touching_loops.forEach(container => {
-        if(negative)
+        if (negative)
             ans += ' - (';
         else
             ans += ' + (';
-        
+
         negative = 1 - negative;
-        let container_gain = container.map(loop_group => 
-            loop_group.loops.map(loop => loop_gains[loop]).join(' * ')
-            );
+        let container_gain = container.map(loop_group =>
+            loop_group.loops.map(loop_index => loop_gains[loop_index]).join(' * ')
+        );
         ans += container_gain.join(' + ');
         ans += ')';
+        console.log('-------');
     });
 
     return math.simplify(ans).toString();
 }
 
 
-function solve(graph)
-{
-    let forward_paths = generate_forward_paths(graph);
+function solve(graph) {
+    const forward_paths = generate_forward_paths(graph);
 
-    let cycles = generate_cycles(graph);
+    const cycles = generate_cycles(graph);
 
-    let cycles_conflicts = generate_cycles_conflicts(cycles);
+    const cycles_conflicts = generate_cycles_conflicts(cycles);
 
-    let non_touching_loops = generate_non_touching_cycle_groups(cycles, cycles_conflicts);
+    const non_touching_loops = generate_non_touching_cycle_groups(cycles, cycles_conflicts);
 
-    let loop_gains = get_loop_gains(graph, cycles);
+    const loop_gains = get_loop_gains(graph, cycles);
 
-    let forward_paths_gains = get_loop_gains(graph, forward_paths);
+    const forward_paths_gains = get_loop_gains(graph, forward_paths);
 
-    let big_delta = get_big_delta(non_touching_loops, loop_gains);
+    const big_delta = get_big_delta(non_touching_loops, loop_gains);
 
-    let deltas = generate_deltas(cycles, forward_paths, non_touching_loops);
+    const deltas = generate_deltas(cycles, forward_paths, non_touching_loops, loop_gains);
 
-    let transfer_numerator = math.simplify(forward_paths_gains.map((path, index) => path + '*' + deltas[index]).join(' + ')).toString();
+    const transfer_numerator = math.simplify(forward_paths_gains.map((path, index) => path + '*' + deltas[index]).join(' + ')).toString();
 
-    let final_gain = math.simplify('(' + transfer_numerator + ') / (' + big_delta + ')').toString();
+    const final_gain = math.simplify('(' + transfer_numerator + ') / (' + big_delta + ')').toString();
 
     return [forward_paths, forward_paths_gains, cycles, loop_gains, non_touching_loops, big_delta, deltas, final_gain];
 }
 
 
-
-let g1 = new Graph();
+/*
+let graph = new Graph();
 
 for(let i = 0; i <= 6;i++)
-    g1.add_node(i);
+    graph.add_node(i);
 
-g1.add_edge(0, 1, 1);
-g1.add_edge(1, 2, 5);
-g1.add_edge(1, 5, 10);
-g1.add_edge(2, 3, 10);
-g1.add_edge(3, 4, 2);
-g1.add_edge(3, 2, -1);
-g1.add_edge(4, 6, 1);
-g1.add_edge(4, 3, -2);
-g1.add_edge(4, 1, -1);
-g1.add_edge(5, 4, 2);
-g1.add_edge(5, 5, -1);
+graph.add_edge(0, 1, 1);
+graph.add_edge(1, 2, 5);
+graph.add_edge(1, 5, 10);
+graph.add_edge(2, 3, 10);
+graph.add_edge(3, 4, 2);
+graph.add_edge(3, 2, -1);
+graph.add_edge(4, 6, 1);
+graph.add_edge(4, 3, -2);
+graph.add_edge(4, 1, -1);
+graph.add_edge(5, 4, 2);
+graph.add_edge(5, 5, -1);
 
 let g2 = new Graph();
 
@@ -466,7 +463,7 @@ g3.add_edge(8, 2, 'm');
 
 
 
-let test_cases = [g1];
+let test_cases = [graph];
 
 function testGraph(g)
 {
@@ -479,16 +476,16 @@ function testGraph(g)
     let non_touching_loops = generate_non_touching_cycle_groups(cycles, cycles_conflicts);
     console.log('non_touching_loops: ', non_touching_loops);
 
-    
+
     let loop_gains = get_loop_gains(g, cycles);
     console.log('loop_gain: ', loop_gains);
-    
+
     let forward_paths_gains = get_forward_paths_gains(g, fp);
     console.log('loop_gain: ', forward_paths_gains);
-    
+
     let big_delta = get_big_delta(non_touching_loops, loop_gains);
     console.log('big_delta: ', big_delta);
-    
+
     let deltas = generate_deltas(cycles, fp, non_touching_loops, loop_gains);
     console.log('deltas: ', deltas);
 
@@ -502,3 +499,4 @@ function testGraph(g)
 }
 
 test_cases.forEach(g => testGraph(g));
+*/
