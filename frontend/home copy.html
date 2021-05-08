@@ -92,6 +92,9 @@
       <div class="container" style="text-align: left" id="forwardPath"></div>
       <div class="container" style="text-align: center" id="individual"></div>
       <div class="container" style="text-align: right" id="nonTouching"></div>
+      <div class="container" style="text-align: left" id="bigDelta"></div>
+      <div class="container" style="text-align: left" id="Deltas"></div>
+     <div class="container" style="text-align: left" id="finalGain"></div>
     </div>
   </div>
   <script>
@@ -195,9 +198,86 @@
       console.log(graph);
 
       edges.get().forEach(edge => graph.add_edge(edge.from, edge.to, edge.label));
-
-      solve(graph);
+      let [forward_paths,forward_paths_gains, cycles, loopsGains,non_touching_loops, bigDelta,deltas,finalGain] = solve(graph);
+        non_touching_loops.shift() //remove individual loops
+        console.log(forward_paths);
+        console.log(cycles);
+        console.log(non_touching_loops);
+        console.log(deltas);
+        renderForward(forward_paths);
+        renderIndividualLoops(cycles);
+        renderNonTouchingLoops(non_touching_loops);
+        document.querySelector("#bigDelta").insertAdjacentHTML("afterbegin",`<p>main Delta: ${bigDelta}</p>` );
+        renderDeltas(deltas);
+       
+        document.querySelector("#finalGain").insertAdjacentHTML("afterbegin",`<p>transfer Gain : ${finalGain}</p>` );
     }
+    function renderDeltas(deltas) {
+        var counter = 0;
+        const html = deltas
+          .map((delta) => {
+            counter++;
+            return `<p>Delta${counter}: ${delta}</p>`;
+          })
+          .join("");
+
+        document
+          .querySelector("#Deltas")
+          .insertAdjacentHTML("afterbegin", html);
+        }
+    function renderForward(data) {
+      var counter = 0;
+      const html = data
+        .map((node) => {
+          var holder = "";
+          for (let i = 0; i < node.length; i++) {
+            holder = holder.concat(node[i]);
+          }
+          counter++;
+          return `<p>forward Path${counter}: ${holder}</p>`;
+        })
+        .join("");
+
+      document
+        .querySelector("#forwardPath")
+        .insertAdjacentHTML("afterbegin", html);
+    }
+    function renderIndividualLoops(data) {
+      var counter = 0;
+      const html = data
+        .map((node) => {
+          var holder = "";
+          for (let i = 0; i < node.length; i++) {
+            holder = holder.concat(node[i]);
+          }
+          loopsInString.push(holder);
+          counter++;
+          return `<p>loop ${counter}: ${holder}</p>`;
+        })
+        .join("");
+
+      document
+        .querySelector("#individual")
+        .insertAdjacentHTML("afterbegin", html);
+    }
+    function renderNonTouchingLoops(loopgroups) {
+      var counter = 0;
+      const html = loopgroups
+        .map((group) => {
+          var holder = "";
+          for (let i = 0; i < group.length; i++) {
+            holder = holder.concat(loopsInString[group[i]] + ",");
+          }
+          counter++;
+          return `<p>non touching loop ${counter}: ${holder}</p>`;
+        })
+        .join("");
+
+      document
+        .querySelector("#nonTouching")
+        .insertAdjacentHTML("afterbegin", html);
+    }
+
 
   </script>
 
