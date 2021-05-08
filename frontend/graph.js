@@ -32,12 +32,15 @@ class Graph {
     remove_node(removedNode) {
         delete this.adj_list[removedNode];
 
-        for (let from in this.adj_list)
-            this.adj_list[from].filter(edge => edge.to !== from);
+        console.log(this.adj_list);
+        nodes = Object.keys(graph.adj_list)
+        console.log(nodes);
+        for (let node in nodes)
+            this.adj_list[node] = this.adj_list[node].filter(edge => edge.to !== removedNode);
     }
 
     remove_edge(from, to) {
-        this.adj_list[from].filter(edge => edge.to !== to);
+        this.adj_list[from] = this.adj_list[from].filter(edge => edge.to !== to);
     }
 }
 
@@ -423,7 +426,7 @@ g3.add_edge(8, 6, 'l');
 g3.add_edge(8, 2, 'm');
 
 
-let test_cases = [g1, g2, g3];
+let test_cases = [g1];
 
 function testGraph(g)
 {
@@ -434,10 +437,10 @@ function testGraph(g)
 
     let cycles_conflicts = generate_cycles_conflicts(cycles);
     let non_touching_loops = generate_non_touching_cycle_groups(cycles, cycles_conflicts);
-    console.log('non_touching_loops: ', JSON.stringify(non_touching_loops));
+    console.log('non_touching_loops: ', non_touching_loops);
 
     let deltas = generate_deltas(cycles, fp, non_touching_loops);
-    console.log('deltas: ', JSON.stringify(deltas));
+    console.log('deltas: ', deltas);
     console.log('----------------------------------------------------');
 }
 
