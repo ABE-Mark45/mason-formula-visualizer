@@ -74,6 +74,22 @@
 
 
 
+      <!-- Solve -->
+      <div class="row mx-auto w-25">
+        <button type="button" class="btn btn-primary" onclick="solveFlow()">
+          Solve
+        </button>
+      </div>
+
+      <br />
+      <div class="container" style="text-align: left" id="solution">
+        <div class="container" style="text-align: left" id="forwardPath"></div>
+        <div class="container" style="text-align: center" id="individual"></div>
+        <div class="container" style="text-align: right" id="nonTouching"></div>
+        <div class="container" style="text-align: left" id="bigDelta"></div>
+        <div class="container" style="text-align: left" id="Deltas"></div>
+        <div class="container" style="text-align: left" id="finalGain"></div>
+      </div>
     </div>
 
     <!-- Canvas -->
@@ -185,17 +201,34 @@
       */
       //remove the comment tag in production
       //data[2].shift() //remove individual loops
-      let [forward_paths, cycles, non_touching_loops, deltas] = solve(graph);
+     
+      let [forward_paths,forward_paths_gains, cycles, loopsGains,non_touching_loops, bigDelta,deltas,finalGain] = solve(graph);
+        non_touching_loops.shift() //remove individual loops
+        console.log(forward_paths);
+        console.log(cycles);
+        console.log(non_touching_loops);
+        console.log(deltas);
+        renderForward(forward_paths);
+        renderIndividualLoops(cycles);
+        renderNonTouchingLoops(non_touching_loops);
+        document.querySelector("#bigDelta").insertAdjacentHTML("afterbegin",`<p>main Delta: ${bigDelta}</p>` );
+        renderDeltas(deltas);
+       
+        document.querySelector("#finalGain").insertAdjacentHTML("afterbegin",`<p>transfer Gain : ${finalGain}</p>` );
+      }
+      function renderDeltas(deltas) {
+        var counter = 0;
+        const html = deltas
+          .map((delta) => {
+            counter++;
+            return `<p>Delta${counter}: ${delta}</p>`;
+          })
+          .join("");
 
-      console.log(forward_paths);
-      console.log(cycles);
-      console.log(non_touching_loops);
-      console.log(deltas);
-      renderForward(data1);
-      renderIndividualLoops(data);
-      renderNonTouchingLoops(loopgroups);
-      console.log(data1);
-    }
+        document
+          .querySelector("#Deltas")
+          .insertAdjacentHTML("afterbegin", html);
+        }
     function renderForward(data) {
       var counter = 0;
       const html = data
