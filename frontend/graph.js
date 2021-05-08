@@ -293,7 +293,6 @@ function generate_forward_paths(g) {
     let nodes = Object.keys(g.adj_list);
     let start_node = parseInt(nodes[0]);
     let end_node = parseInt(nodes[nodes.length - 1]);
-    console.log(nodes);
     let visited = { start_node: true };
     let stack = [start_node];
     let forward_paths = [];
