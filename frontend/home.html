@@ -105,30 +105,46 @@
       methods = new Method();
       graph = new Graph();
       var loopsInString = [];
+      
       function addEdge() {
         var from = parseInt(document.getElementById("edgeFrom").value);
         var to = parseInt(document.getElementById("edgeTo").value);
         var value = document.getElementById("value").value;
+
+        if (!methods.validNodes([from, to])){
+          alert("Invalid Node(s)");
+          return;
+        }
         
         if (!methods.edgeExists(graph, from, to)) {
-          console.log("value = " + value);
-          console.log(typeof value);
           graph.add_edge(from, to, value)
           draw();
         }
         else {
-          alert("Edge already exists!")
+          alert("Edge already exists")
         }
       }
 
       function deleteEdge() {
         var from = parseInt(document.getElementById("edgeDeleteFrom").value);
-        var To = parseInt(document.getElementById("edgeDeleteTo").value);
+        var to = parseInt(document.getElementById("edgeDeleteTo").value);
+
+        if (!methods.validNodes([from, to])){
+          alert("Invalid Node(s)");
+          return;
+        }
+
         graph.remove_edge(from, To)
         draw();
       }
       function deleteNode() {
         var node = parseInt(document.getElementById("nodeToDelete").value);
+
+        if (!methods.validNodes([node])){
+          alert("Invalid Node(s)");
+          return;
+        }
+
         graph.remove_node(node)
         draw();
 
@@ -146,9 +162,7 @@
         var network = new vis.Network(container, data);
       }
       function solveFlow() {
-        console.log(graph);
-        console.log("Render dot " + methods.renderDot(graph));
-        draw(methods.renderDot(graph))
+        /*
         //call solving fn here
         var data1 = [[1, 2, 3, 4, 5, 6, 7, 8]
           , [1, 2, 3, 4, 5, 6, 8]
@@ -162,12 +176,15 @@
           , [2, 3, 4, 7, 8, 2]
           , [3, 4, 7, 3]];
         var loopgroups = [[0, 6], [0, 7], [4, 7]]
-
+        */
         //remove the comment tag in production
         //data[2].shift() //remove individual loops
-        data=solve(graph);
-        forwardPaths = data[0]
-        console.log(forwardPaths);
+        let [forward_paths, cycles, non_touching_loops, deltas] = solve(graph);
+
+        console.log(forward_paths);
+        console.log(cycles);
+        console.log(non_touching_loops);
+        console.log(deltas);
         renderForward(data1)
         renderIndividualLoops(data);
         renderNonTouchingLoops(loopgroups);

@@ -32,13 +32,10 @@ class Graph {
     remove_node(removedNode) {
         delete this.adj_list[removedNode];
 
-        console.log(this.adj_list);
-        nodes = Object.keys(graph.adj_list)
-        console.log(nodes);
-        for (let node in nodes)
+        for (let node in this.adj_list)
             this.adj_list[node] = this.adj_list[node].filter(edge => edge.to !== removedNode);
+        
     }
-
     remove_edge(from, to) {
         this.adj_list[from] = this.adj_list[from].filter(edge => edge.to !== to);
     }
@@ -362,7 +359,7 @@ function generate_deltas(cycles, forward_paths, non_touching_loops) {
 function solve(graph)
 {
     let forward_paths = generate_forward_paths(graph);
-    console.log(forward_paths);
+
     let cycles = generate_cycles(graph);
 
     let cycles_conflicts = generate_cycles_conflicts(cycles);
@@ -425,7 +422,7 @@ g3.add_edge(7, 3, 'k');
 g3.add_edge(8, 6, 'l');
 g3.add_edge(8, 2, 'm');
 
-
+/*
 let test_cases = [g1];
 
 function testGraph(g)
@@ -444,4 +441,4 @@ function testGraph(g)
     console.log('----------------------------------------------------');
 }
 
-test_cases.forEach(g => testGraph(g));
+test_cases.forEach(g => testGraph(g));*/

@@ -34,6 +34,20 @@ class Method {
     return found
   }
 
+  nodeExists(node){
+    nodes = Object.keys(graph.adj_list)
+    return nodes.includes(node.toString(10)) //because the Object.keys() returns array of string
+  }
+
+  validNodes(nodes){
+    for (let i = 0;i < nodes.length;i++){
+      if (!this.nodeExists(nodes[i]))
+        return false;
+    }
+
+    return true;
+  }
+
 
   checkAvailability(from, To, dot) {
     if (dot.includes(from) && dot.includes(To) && !dot.includes(";" + from + "->" + To)) {
