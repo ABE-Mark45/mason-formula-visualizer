@@ -233,7 +233,10 @@
         .map((node) => {
           var holder = "";
           for (let i = 0; i < node.length; i++) {
+            if(i==node.length-1)
             holder = holder.concat(node[i]);
+            else
+            holder = holder.concat(node[i]+"->");
           }
           counter++;
           return `<p>forward Path${counter}: ${holder}</p>`;
@@ -250,7 +253,10 @@
         .map((node) => {
           var holder = "";
           for (let i = 0; i < node.length; i++) {
+            if(i==node.length-1)
             holder = holder.concat(node[i]);
+            else
+            holder = holder.concat(node[i]+"->");
           }
           loopsInString.push(holder);
           counter++;
@@ -268,7 +274,13 @@
         .map((group) => {
           var holder = "";
           for (let i = 0; i < group.length; i++) {
-            holder = holder.concat(loopsInString[group[i]] + ",");
+            console.log(group[i]);
+            for (let j = 0; j < group[i].loops.length; j++) {
+              if(j==group[i].loops.length-1)
+              holder = holder.concat(loopsInString[group[i].loops[j]] + " /<br>");
+              else 
+              holder = holder.concat(loopsInString[group[i].loops[j]] + " ->");
+            }
           }
           counter++;
           return `<p>non touching loop ${counter}: ${holder}</p>`;
