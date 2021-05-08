@@ -45,7 +45,7 @@
           <input type="text" class="form-control" id="edgeTo" placeholder="edge to" />
           <input type="text" class="form-control" id="value" placeholder="edge value" />
           <button type="button" class="btn btn-primary" onclick="addEdge()">
-            Add Edge
+            Add/Edit Edge
           </button>
         </div>
       </form>
@@ -77,7 +77,7 @@
 
     <!-- Canvas -->
     <div class="row">
-      <div id="mynetwork" class="my-3 border border-dark rounded" style="height:400px;"></div>
+      <div id="mynetwork" class="my-3 border border-dark rounded" style="height: 650px;"></div>
     </div>
 
     <!-- Solve -->
@@ -159,7 +159,7 @@
       if (existing_edges.length === 0)
         edges.add({ from: from, to: to, label: value });
       else
-        alert('Edge already exists')
+        edges.updateOnly({id: existing_edges[0].id, label: value});
     }
 
     function addNode() {
