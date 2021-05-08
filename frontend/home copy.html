@@ -94,10 +94,11 @@
       <div class="container" style="text-align: right" id="nonTouching"></div>
       <div class="container" style="text-align: left" id="bigDelta"></div>
       <div class="container" style="text-align: left" id="Deltas"></div>
-     <div class="container" style="text-align: left" id="finalGain"></div>
+      <div class="container" style="text-align: left" id="finalGain"></div>
     </div>
   </div>
   <script>
+    /*
     let nodes = new vis.DataSet([
       { id: 0, label: '0' },
       { id: 1, label: '1' },
@@ -123,7 +124,10 @@
       { from: 4, to: 1, label: '-1' },
       { from: 5, to: 4, label: '2' },
       { from: 5, to: 5, label: '-1' }]);
-
+  */
+    let nodes = new vis.DataSet([]);
+    let edges = new vis.DataSet([]);
+    let nodes_counter = 0;
     // create a network
     let container = document.getElementById('mynetwork');
 
@@ -159,7 +163,7 @@
       if (existing_edges.length === 0)
         edges.add({ from: from, to: to, label: value });
       else
-        edges.updateOnly({id: existing_edges[0].id, label: value});
+        edges.updateOnly({ id: existing_edges[0].id, label: value });
     }
 
     function addNode() {
@@ -169,7 +173,8 @@
 
     function deleteNode() {
       var node = parseInt(document.getElementById("nodeToDelete").value);
-
+      if (nodes.get(node))
+        nodes_counter--;
       nodes.remove(node);
 
       let edges_to_be_deleted = edges.get({
@@ -200,33 +205,33 @@
       console.log(graph);
 
       edges.get().forEach(edge => graph.add_edge(edge.from, edge.to, edge.label));
-      let [forward_paths,forward_paths_gains, cycles, loopsGains,non_touching_loops, bigDelta,deltas,finalGain] = solve(graph);
-        non_touching_loops.shift() //remove individual loops
-        console.log(forward_paths);
-        console.log(cycles);
-        console.log(non_touching_loops);
-        console.log(deltas);
-        renderForward(forward_paths);
-        renderIndividualLoops(cycles);
-        renderNonTouchingLoops(non_touching_loops);
-        document.querySelector("#bigDelta").insertAdjacentHTML("afterbegin",`<p>main Delta: ${bigDelta}</p>` );
-        renderDeltas(deltas);
-       
-        document.querySelector("#finalGain").insertAdjacentHTML("afterbegin",`<p>transfer Gain : ${finalGain}</p>` );
+      let [forward_paths, forward_paths_gains, cycles, loopsGains, non_touching_loops, bigDelta, deltas, finalGain] = solve(graph);
+      non_touching_loops.shift() //remove individual loops
+      console.log(forward_paths);
+      console.log(cycles);
+      console.log(non_touching_loops);
+      console.log(deltas);
+      renderForward(forward_paths);
+      renderIndividualLoops(cycles);
+      renderNonTouchingLoops(non_touching_loops);
+      document.querySelector("#bigDelta").insertAdjacentHTML("afterbegin", `<p>main Delta: ${bigDelta}</p>`);
+      renderDeltas(deltas);
+
+      document.querySelector("#finalGain").insertAdjacentHTML("afterbegin", `<p>transfer Gain : ${finalGain}</p>`);
     }
     function renderDeltas(deltas) {
-        var counter = 0;
-        const html = deltas
-          .map((delta) => {
-            counter++;
-            return `<p>Delta${counter}: ${delta}</p>`;
-          })
-          .join("");
+      var counter = 0;
+      const html = deltas
+        .map((delta) => {
+          counter++;
+          return `<p>Delta${counter}: ${delta}</p>`;
+        })
+        .join("");
 
-        document
-          .querySelector("#Deltas")
-          .insertAdjacentHTML("afterbegin", html);
-        }
+      document
+        .querySelector("#Deltas")
+        .insertAdjacentHTML("afterbegin", html);
+    }
     function renderForward(data) {
       var counter = 0;
       const html = data
