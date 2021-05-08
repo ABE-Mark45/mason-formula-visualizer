@@ -273,9 +273,18 @@ function get_transfer_function(g, path) {
         let edge = g.adj_list[path[i - 1]].find(e => e.to === path[i]);
         transfer_array.push(edge.weight);
     }
-    return transfer_array;
+    return transfer_array.join('*');
 }
 
+function get_loop_gains(g, cycles)
+{
+    return cycles.map(cycle => math.simplify(get_transfer_function(g, cycle)).toString());
+}
+
+function get_forward_paths_gains(g, forward_paths)
+{
+    return forward_paths.map(path => math.simplify(get_transfer_function(g, path)).toString());
+}
 
 /*
 generates forward paths
@@ -338,8 +347,8 @@ or if delta_1 = delta_2 = 1, the function returns
 
 Please check all entries in each forward path container while alternating signs
 */
-function generate_deltas(cycles, forward_paths, non_touching_loops) {
-    return forward_paths.map(cur_forward_path => 
+function generate_deltas(cycles, forward_paths, non_touching_loops, loop_gains) {
+    let deltas = forward_paths.map(cur_forward_path => 
         non_touching_loops.map(container =>
             container.filter(loop_group => {
                 let node_set = loop_group.generate_node_set(cycles);
@@ -349,11 +358,35 @@ function generate_deltas(cycles, forward_paths, non_touching_loops) {
 
                 return true;
             })
-        )
+        ).filter(container => container.length)
     );
+
+    return deltas.map(d => get_big_delta(d, loop_gains));
 }
 
 
+function get_big_delta(non_touching_loops, loop_gains)
+{
+    let ans = '1';
+
+    let negative = 1;
+
+    non_touching_loops.forEach(container => {
+        if(negative)
+            ans += ' - (';
+        else
+            ans += ' + (';
+        
+        negative = 1 - negative;
+        let container_gain = container.map(loop_group => 
+            loop_group.loops.map(loop => loop_gains[loop]).join(' * ')
+            );
+        ans += container_gain.join(' + ');
+        ans += ')';
+    });
+
+    return math.simplify(ans).toString();
+}
 
 
 function solve(graph)
@@ -366,9 +399,19 @@ function solve(graph)
 
     let non_touching_loops = generate_non_touching_cycle_groups(cycles, cycles_conflicts);
 
+    let loop_gains = get_loop_gains(graph, cycles);
+
+    let forward_paths_gains = get_loop_gains(graph, forward_paths);
+
+    let big_delta = get_big_delta(non_touching_loops, loop_gains);
+
     let deltas = generate_deltas(cycles, forward_paths, non_touching_loops);
 
-    return [forward_paths, cycles, non_touching_loops, deltas];
+    let transfer_numerator = math.simplify(forward_paths_gains.map((path, index) => path + '*' + deltas[index]).join(' + ')).toString();
+
+    let final_gain = math.simplify('(' + transfer_numerator + ') / (' + big_delta + ')').toString();
+
+    return [forward_paths, forward_paths_gains, cycles, loop_gains, non_touching_loops, big_delta, deltas, final_gain];
 }
 
 
@@ -422,7 +465,8 @@ g3.add_edge(7, 3, 'k');
 g3.add_edge(8, 6, 'l');
 g3.add_edge(8, 2, 'm');
 
-/*
+
+
 let test_cases = [g1];
 
 function testGraph(g)
@@ -436,9 +480,26 @@ function testGraph(g)
     let non_touching_loops = generate_non_touching_cycle_groups(cycles, cycles_conflicts);
     console.log('non_touching_loops: ', non_touching_loops);
 
-    let deltas = generate_deltas(cycles, fp, non_touching_loops);
+    
+    let loop_gains = get_loop_gains(g, cycles);
+    console.log('loop_gain: ', loop_gains);
+    
+    let forward_paths_gains = get_forward_paths_gains(g, fp);
+    console.log('loop_gain: ', forward_paths_gains);
+    
+    let big_delta = get_big_delta(non_touching_loops, loop_gains);
+    console.log('big_delta: ', big_delta);
+    
+    let deltas = generate_deltas(cycles, fp, non_touching_loops, loop_gains);
     console.log('deltas: ', deltas);
+
+    let transfer_numerator = math.simplify(forward_paths_gains.map((path, index) => path + '*' + deltas[index]).join(' + ')).toString();
+    console.log('transfer numerator: ', transfer_numerator);
+
+    let final_gain = math.simplify('(' + transfer_numerator + ') / (' + big_delta + ')').toString();
+    console.log('final gain: ', final_gain);
+
     console.log('----------------------------------------------------');
 }
 
-test_cases.forEach(g => testGraph(g));*/
+test_cases.forEach(g => testGraph(g));
