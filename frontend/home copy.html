@@ -90,15 +90,15 @@
     <br />
     <div class="container" style="text-align: left" id="solution">
       <div class="container" style="text-align: left" id="forwardPath"></div>
-      <div class="container" style="text-align: center" id="individual"></div>
-      <div class="container" style="text-align: right" id="nonTouching"></div>
+      <div class="container" style="text-align: left" id="individual"></div>
+      <div class="container" style="text-align: left" id="nonTouching"></div>
       <div class="container" style="text-align: left" id="bigDelta"></div>
       <div class="container" style="text-align: left" id="Deltas"></div>
       <div class="container" style="text-align: left" id="finalGain"></div>
     </div>
   </div>
   <script>
-    /*
+    
     let nodes = new vis.DataSet([
       { id: 0, label: '0' },
       { id: 1, label: '1' },
@@ -124,10 +124,13 @@
       { from: 4, to: 1, label: '-1' },
       { from: 5, to: 4, label: '2' },
       { from: 5, to: 5, label: '-1' }]);
-  */
+  
+ /*
     let nodes = new vis.DataSet([]);
     let edges = new vis.DataSet([]);
     let nodes_counter = 0;
+*/
+
     // create a network
     let container = document.getElementById('mynetwork');
 
@@ -139,10 +142,12 @@
     let options = {
       edges: {
         arrows: { to: true },
-        physics: true
+        physics: true,
+        shadow: true
       },
       nodes: {
-        physics: false
+        physics: false,
+        shadow: true
       }
     };
 
@@ -211,8 +216,8 @@
       console.log(cycles);
       console.log(non_touching_loops);
       console.log(deltas);
-      renderForward(forward_paths);
-      renderIndividualLoops(cycles);
+      renderForward(forward_paths, forward_paths_gains);
+      renderIndividualLoops(cycles, loopsGains);
       renderNonTouchingLoops(non_touching_loops);
       document.querySelector("#bigDelta").insertAdjacentHTML("afterbegin", `<p>main Delta: ${bigDelta}</p>`);
       renderDeltas(deltas);
@@ -232,34 +237,20 @@
         .querySelector("#Deltas")
         .insertAdjacentHTML("afterbegin", html);
     }
-    function renderForward(data) {
-      var counter = 0;
-      const html = data
-        .map((node) => {
-          var holder = "";
-          for (let i = 0; i < node.length; i++) {
-            holder = holder.concat(node[i]);
-          }
-          counter++;
-          return `<p>forward Path${counter}: ${holder}</p>`;
-        })
+    function renderForward(data, forward_paths_gains) {
+      const html = `<h1 class='display-1'>Forward Paths</h1>` +  data
+        .map((node, counter) => `<p><h3>forward Path ${counter}:</h3> ${node.join('->')}, <strong>Gain: ${forward_paths_gains[counter]}</strong></p>`)
         .join("");
 
       document
         .querySelector("#forwardPath")
         .insertAdjacentHTML("afterbegin", html);
     }
-    function renderIndividualLoops(data) {
-      var counter = 0;
-      const html = data
-        .map((node) => {
-          var holder = "";
-          for (let i = 0; i < node.length; i++) {
-            holder = holder.concat(node[i]);
-          }
-          loopsInString.push(holder);
-          counter++;
-          return `<p>loop ${counter}: ${holder}</p>`;
+    function renderIndividualLoops(data, loopsGains) {
+      const html = `<h1 class='display-1'>Loops</h1>` + data
+        .map((node, counter) => {
+          loopsInString.push(node.join('->'));
+          return `<p><h3>loop ${counter}:</h3> ${node.join('->')}, <strong>Gain: ${loopsGains[counter]}</strong></p>`;
         })
         .join("");
 
