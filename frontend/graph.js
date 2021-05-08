@@ -121,7 +121,7 @@ function dfs_generate_loop(g, visited, stack, cycles, from) {
 }
 
 
-function generate_loops(g) {
+function generate_cycles(g) {
     let visited = {};
     let stack = [];
     let cycles = [];
@@ -219,11 +219,11 @@ function generate_non_touching_cycle_groups(cycles, cycles_conflicts) {
     return non_touching_loops_container;
 }
 
-function get_transfer_function(g, cycle) {
+function get_transfer_function(g, path) {
     let transfer_array = [];
 
-    for (let i = 1; i < cycle.length; i++) {
-        let edge = g.adj_list[cycle[i - 1]].find(e => e.to === cycle[i]);
+    for (let i = 1; i < path.length; i++) {
+        let edge = g.adj_list[path[i - 1]].find(e => e.to === path[i]);
         transfer_array.push(edge.weight);
     }
     return transfer_array;
@@ -278,6 +278,24 @@ function generate_deltas(cycles, forward_paths, non_touching_loops) {
 }
 
 
+
+
+function solve(graph)
+{
+    let forward_paths = generate_forward_paths(graph);
+    let cycles = generate_cycles(graph);
+
+    let cycles_conflicts = generate_cycles_conflicts(cycles);
+
+    let non_touching_loops = generate_non_touching_cycle_groups(cycles, cycles_conflicts);
+
+    let deltas = generate_deltas(cycles, forward_paths, non_touching_loops);
+
+    return [forward_paths, cycles, non_touching_loops, deltas];
+}
+
+
+
 function testGraph() {
     let g = new Graph();
 
@@ -303,7 +321,7 @@ function testGraph() {
     console.log('forward path: ');
     console.log(fp);
 
-    let cycles = generate_loops(g);
+    let cycles = generate_cycles(g);
 
     console.table(cycles);
     let transfers = cycles.map(cycle => get_transfer_function(g, cycle));
