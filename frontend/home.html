@@ -75,7 +75,7 @@
 
         <!-- Solve -->
         <div class="row mt-3 mx-auto w-25">
-          <button type="button" class="btn btn-primary" onclick="solve()">Solve</button>
+          <button type="button" class="btn btn-primary" onclick="solveFlow()">Solve</button>
         </div>
       </div>
 
@@ -83,15 +83,14 @@
       <div class="col">
         <div id="mynetwork" class="my-5 h-75 border border-dark rounded"> </div>
       </div>
-    </div>
-    <br>
-    <div class="container" style="text-align:center">
-      Final result goes here
-    </div>
-  </div>
   <br>
-  <div class="container" style="text-align:center">
-    Final result goes here
+  <div class="container" style="text-align:left" id="solution">
+    <div class="container" style="text-align:left" id="forwardPath">
+    </div>
+    <div class="container" style="text-align:center" id="individual">
+    </div>
+    <div class="container" style="text-align:right" id="nonTouching">
+    </div>
   </div>
 </div>
 <script>
@@ -107,7 +106,7 @@
   var counter=0;
   methods=new Method();
   graph=new Graph();
- 
+ var loopsInString=[];
   function addEdge(){
    var from =document.getElementById("edgeFrom").value;
    var To =document.getElementById("edgeTo").value;
@@ -150,10 +149,72 @@
   var data = vis.parseDOTNetwork(dotElement);
   var network = new vis.Network(container, data);
  }
-function solve(){
+function solveFlow(){
   //call solving fn here
+  var data1= [[1, 2, 3, 4, 5, 6, 7, 8]
+,[1, 2, 3, 4, 5, 6, 8]
+  ,[1, 2, 3, 4, 7, 8]]; 
+  var data=[[5, 6, 5]
+, [6, 7, 8, 6]
+, [2, 3, 4, 5, 6, 7, 8, 2]
+, [3, 4, 5, 6, 7, 3]
+, [6, 8, 6]
+, [2, 3, 4, 5, 6, 8, 2]
+, [2, 3, 4, 7, 8, 2]
+,[3, 4, 7, 3]];
+var loopgroups=[[0, 6],[0, 7],[4, 7]]
 
+//remove the comment tag in production
+//data[2].shift() //remove individual loops
+  //data=solve(graph);
+ renderForward(data1)
+  renderIndividualLoops(data);
+  renderNonTouchingLoops(loopgroups);
+  console.log(data1);
+ 
 }
+function renderForward(data){
+  var counter=0
+  const html=data.map(node =>{
+    var holder="";
+    for (let i = 0; i < node.length; i++) {
+      holder=holder.concat(node[i]);
+    }
+    counter++;
+    return `<p>forward Path${counter}: ${holder}</p>`;
+  }).join("");
+  
+  document.querySelector("#forwardPath").insertAdjacentHTML("afterbegin",html);
+}
+function renderIndividualLoops(data){
+  var counter=0
+  const html=data.map(node =>{
+    var holder="";
+    for (let i = 0; i < node.length; i++) {
+      holder=holder.concat(node[i]);
+    }
+    loopsInString.push(holder);
+    counter++;
+    return `<p>loop ${counter}: ${holder}</p>`;
+  }).join("");
+  
+  document.querySelector("#individual").insertAdjacentHTML("afterbegin",html);
+}
+function renderNonTouchingLoops(loopgroups){
+  var counter=0
+  const html=loopgroups.map(group =>{
+    var holder="";
+    for (let i = 0; i < group.length; i++) {
+      holder=holder.concat(loopsInString[group[i]]+",");
+    }
+    counter++;
+    return `<p>non touching loop ${counter}: ${holder}</p>`;
+  }).join("");
+  
+  document.querySelector("#nonTouching").insertAdjacentHTML("afterbegin",html);
+}
+
+
 
 </script>
 </body>

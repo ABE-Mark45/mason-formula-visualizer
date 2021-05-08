@@ -284,7 +284,7 @@ function generate_forward_paths(g) {
     let nodes = Object.keys(g.adj_list);
     let start_node = parseInt(nodes[0]);
     let end_node = parseInt(nodes[nodes.length - 1]);
-
+    console.log(nodes);
     let visited = { start_node: true };
     let stack = [start_node];
     let forward_paths = [];
@@ -359,6 +359,7 @@ function generate_deltas(cycles, forward_paths, non_touching_loops) {
 function solve(graph)
 {
     let forward_paths = generate_forward_paths(graph);
+    console.log(forward_paths);
     let cycles = generate_cycles(graph);
 
     let cycles_conflicts = generate_cycles_conflicts(cycles);
@@ -401,13 +402,13 @@ function testGraph() {
 
     console.table(cycles);
     let transfers = cycles.map(cycle => get_transfer_function(g, cycle));
-
+    console.log(transfers)
     let conflicts = generate_cycles_conflicts(cycles);
 
     // console.table(conflicts);
 
     let non_touching_loops = generate_non_touching_cycle_groups(cycles, conflicts);
-
+    console.log(non_touching_loops)
     // non_touching_loops.forEach(container => {
     //     container.forEach(loop_group => console.log(loop_group));
     //     console.log('---------------');
