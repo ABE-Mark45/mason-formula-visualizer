@@ -17,7 +17,6 @@
     }
   </style>
   <script type="text/javascript" src="math.min.js"></script>
-  <script type="text/javascript" src="index.js"></script>
   <script type="text/javascript" src="./graph.js"></script>
   <script type="text/javascript" src="https://visjs.github.io/vis-network/standalone/umd/vis-network.min.js"></script>
 </head>
@@ -28,9 +27,9 @@
       <a class="navbar-brand" href="#">Mason Formula Solver</a>
     </div>
   </nav>
-  <div class="container-fluid">
+  <div class="container">
     <!-- Inputs-->
-    <div class="mx-auto my-3 row align-items-center justify-content-center" style="width: 90%;">
+    <div class="my-3 row align-items-center justify-content-center">
 
       <!-- Add node -->
       <div class="col-1">
@@ -39,12 +38,12 @@
         </button>
       </div>
 
-      <!-- Add/Edit Edge -->
-      <form class="col-5 border border-2 border-success rounded">
+      <!-- Add Edge -->
+      <form class="col-4 border border-2 border-success rounded">
         <div class="input-group">
-          <input type="text" class="form-control" id="edgeFrom" placeholder="From" />
-          <input type="text" class="form-control" id="edgeTo" placeholder="To" />
-          <input type="text" class="form-control" id="value" placeholder="Weight" />
+          <input type="text" class="form-control" id="edgeFrom" placeholder="edge from" />
+          <input type="text" class="form-control" id="edgeTo" placeholder="edge to" />
+          <input type="text" class="form-control" id="value" placeholder="edge value" />
           <button type="button" class="btn btn-primary" onclick="addEdge()">
             Add/Edit Edge
           </button>
@@ -52,9 +51,9 @@
       </form>
 
       <!-- Delete Node -->
-      <form class="col-2 border border-2 border-danger rounded">
+      <form class="col-3 border border-2 border-danger rounded">
         <div class="input-group">
-          <input type="text" class="form-control" id="nodeToDelete" placeholder="Node" />
+          <input type="text" class="form-control" id="nodeToDelete" placeholder="node to delete" />
           <button type="button" class="btn btn-primary" onclick="deleteNode()">
             Delete Node
           </button>
@@ -64,8 +63,8 @@
       <!-- Delete Edge -->
       <form class="col-4  border border-2 border-danger rounded">
         <div class="input-group">
-          <input type="text" class="form-control" id="edgeDeleteFrom" placeholder="From" />
-          <input type="text" class="form-control" id="edgeDeleteTo" placeholder="To" />
+          <input type="text" class="form-control" id="edgeDeleteFrom" placeholder="edge from" />
+          <input type="text" class="form-control" id="edgeDeleteTo" placeholder="edge to" />
           <button type="button" class="btn btn-primary" onclick="deleteEdge()">
             Delete Edge
           </button>
@@ -74,27 +73,13 @@
 
 
 
-      <!-- Solve -->
-      <div class="row mx-auto w-25">
-        <button type="button" class="btn btn-primary" onclick="solveFlow()">
-          Solve
-        </button>
-      </div>
-
-      <br />
-      <div class="container" style="text-align: left" id="solution">
-        <div class="container" style="text-align: left" id="forwardPath"></div>
-        <div class="container" style="text-align: center" id="individual"></div>
-        <div class="container" style="text-align: right" id="nonTouching"></div>
-        <div class="container" style="text-align: left" id="bigDelta"></div>
-        <div class="container" style="text-align: left" id="Deltas"></div>
-        <div class="container" style="text-align: left" id="finalGain"></div>
-      </div>
     </div>
-
+    <div class="row">
+      <h3>Last vertex number is the output</h3>
+    </div>
     <!-- Canvas -->
-    <div class="row mx-auto" style="width: 90%;">
-      <div id="mynetwork" class="my-3 border border-dark rounded" style="height:400px;"></div>
+    <div class="row">
+      <div id="mynetwork" class="my-3 border border-dark rounded" style="height: 650px;"></div>
     </div>
 
     <!-- Solve -->
@@ -107,181 +92,232 @@
     <br />
     <div class="container" style="text-align: left" id="solution">
       <div class="container" style="text-align: left" id="forwardPath"></div>
-      <div class="container" style="text-align: center" id="individual"></div>
-      <div class="container" style="text-align: right" id="nonTouching"></div>
+      <div class="container" style="text-align: left" id="individual"></div>
+      <div class="container" style="text-align: left" id="nonTouching"></div>
+      <div class="container" style="text-align: left" id="bigDelta"></div>
+      <div class="container" style="text-align: left" id="Deltas"></div>
+      <div class="container" style="text-align: left" id="finalGain"></div>
     </div>
   </div>
   <script>
-    // var dot="'digraph {node[shape=circle] ';+' ahs -> box[label="box", arrowhead=box]; \n'}";
-    var dot = "digraph {}";
-    var container = document.getElementById("mynetwork");
-    var data = vis.parseDOTNetwork(dot);
-    var network = new vis.Network(container, data);
-    var data = [[]];
+    
+    let nodes = new vis.DataSet([
+      { id: 0, label: '0' },
+      { id: 1, label: '1' },
+      { id: 2, label: '2' },
+      { id: 3, label: '3' },
+      { id: 4, label: '4' },
+      { id: 5, label: '5' },
+      { id: 6, label: '6' }
+    ]);
+
+    let nodes_counter = 7;
+
+    // create an array with edges
+    let edges = new vis.DataSet([
+      { from: 0, to: 1, label: '1' },
+      { from: 1, to: 2, label: '5' },
+      { from: 1, to: 5, label: '10' },
+      { from: 2, to: 3, label: '10' },
+      { from: 3, to: 4, label: '2' },
+      { from: 3, to: 2, label: '-1' },
+      { from: 4, to: 6, label: '1' },
+      { from: 4, to: 3, label: '-2' },
+      { from: 4, to: 1, label: '-1' },
+      { from: 5, to: 4, label: '2' },
+      { from: 5, to: 5, label: '-1' }]);
+  
+    /*
+  let nodes = new vis.DataSet([
+      { id: 0, label: '0' },
+      { id: 1, label: '1' },
+      { id: 2, label: '2' },
+      { id: 3, label: '3' },
+      { id: 4, label: '4' },
+      { id: 5, label: '5' },
+      { id: 6, label: '6' },
+      { id: 7, label: '7' },
+      { id: 8, label: '8' },
+      { id: 9, label: '9' },
+      { id: 10, label: '10' },
+      { id: 11, label: '11' }
+
+
+    ]);
+
+    let nodes_counter = 7;
+
+    // create an array with edges
+    let edges = new vis.DataSet([
+      { from: 0, to: 1, label: '1' },
+      { from: 1, to: 2, label: '5' },
+      { from: 2, to: 3, label: '10' },
+      { from: 3, to: 4, label: '10' },
+      { from: 4, to: 5, label: '2' },
+      { from: 5, to: 6, label: '-1' },
+      { from: 6, to: 7, label: '1' },
+      { from: 1, to: 8, label: '-2' },
+      { from: 8, to: 9, label: '-1' },
+      { from: 9, to: 10, label: '2' },
+      { from: 10, to: 11, label: '-1' },
+      { from: 11, to: 6, label: '-1' },
+      { from: 4, to: 3, label: '-1' },
+      { from: 3, to: 2, label: '-1' },
+      { from: 2, to: 1, label: '-1' },
+      { from: 9, to: 8, label: '-1' }
+    ]);
+*/
+
+    /*
+    let nodes = new vis.DataSet([]);
+    let edges = new vis.DataSet([]);
+    let nodes_counter = 0;
+*/
+
+    // create a network
+    let container = document.getElementById('mynetwork');
+
+    // provide the data in the vis format
+    let data = {
+      nodes: nodes,
+      edges: edges
+    };
+    let options = {
+      edges: {
+        arrows: { to: true },
+        physics: true,
+        shadow: true
+      },
+      nodes: {
+        physics: false,
+        shadow: true
+      }
+    };
+
+    // initialize your network!
     var counter = 0;
-    methods = new Method();
-    graph = new Graph();
     var loopsInString = [];
+    let network = new vis.Network(container, data, options);
 
     function addEdge() {
-      var from = parseInt(document.getElementById("edgeFrom").value);
-      var to = parseInt(document.getElementById("edgeTo").value);
-      var value = document.getElementById("value").value;
+      let from = parseInt(document.getElementById("edgeFrom").value);
+      let to = parseInt(document.getElementById("edgeTo").value);
+      let value = document.getElementById("value").value;
 
-      if (!methods.validNodes([from, to])) {
-        alert("Invalid Node(s)");
-        return;
-      }
+      let existing_edges = edges.get({
+        filter: e => e.from === from && e.to === to
+      });
 
-      if (!methods.edgeExists(graph, from, to))
-        graph.add_edge(from, to, value);
+      if (existing_edges.length === 0)
+        edges.add({ from: from, to: to, label: value });
       else
-        graph.edit_edge(from, to, value);
+        edges.updateOnly({ id: existing_edges[0].id, label: value });
+    }
 
+    function addNode() {
+      nodes.add({ id: nodes_counter, label: nodes_counter.toString() });
+      nodes_counter++;
+    }
 
-      draw();
+    function deleteNode() {
+      var node = parseInt(document.getElementById("nodeToDelete").value);
+      if (nodes.get(node))
+        nodes_counter--;
+      nodes.remove(node);
 
+      let edges_to_be_deleted = edges.get({
+        filter: e => e.from === node || e.to === node
+      });
+
+      edges_to_be_deleted.forEach(e => edges.remove(e.id));
     }
 
     function deleteEdge() {
-      var from = parseInt(document.getElementById("edgeDeleteFrom").value);
-      var to = parseInt(document.getElementById("edgeDeleteTo").value);
+      let from = parseInt(document.getElementById("edgeDeleteFrom").value);
+      let to = parseInt(document.getElementById("edgeDeleteTo").value);
 
-      if (!methods.validNodes([from, to])) {
-        alert("Invalid Node(s)");
-        return;
-      }
+      let edge = edges.get({
+        filter: e => e.from === from && e.to === to
+      });
 
-      graph.remove_edge(from, To);
-      draw();
+      if (edge.length)
+        edges.remove(edge[0].id);
+      else
+        alert('Edge does not exist!');
     }
-    function deleteNode() {
-      var node = parseInt(document.getElementById("nodeToDelete").value);
 
-      if (!methods.validNodes([node])) {
-        alert("Invalid Node(s)");
-        return;
-      }
-
-      graph.remove_node(node);
-      draw();
-    }
-    function addNode() {
-      graph.add_node(counter);
-      counter++;
-      draw();
-    }
-    function draw() {
-      dotElement = methods.renderDot(graph);
-      var container = document.getElementById("mynetwork");
-      var data = vis.parseDOTNetwork(dotElement);
-      var network = new vis.Network(container, data);
-      var options = {
-        physics: {
-          enabled: false
-        }
-      }
-      network.setOptions(options);
-    }
     function solveFlow() {
-      /*
-      //call solving fn here
-      var data1 = [[1, 2, 3, 4, 5, 6, 7, 8]
-        , [1, 2, 3, 4, 5, 6, 8]
-        , [1, 2, 3, 4, 7, 8]];
-      var data = [[5, 6, 5]
-        , [6, 7, 8, 6]
-        , [2, 3, 4, 5, 6, 7, 8, 2]
-        , [3, 4, 5, 6, 7, 3]
-        , [6, 8, 6]
-        , [2, 3, 4, 5, 6, 8, 2]
-        , [2, 3, 4, 7, 8, 2]
-        , [3, 4, 7, 3]];
-      var loopgroups = [[0, 6], [0, 7], [4, 7]]
-      */
-      //remove the comment tag in production
-      //data[2].shift() //remove individual loops
-     
-      let [forward_paths,forward_paths_gains, cycles, loopsGains,non_touching_loops, bigDelta,deltas,finalGain] = solve(graph);
-        non_touching_loops.shift() //remove individual loops
-        console.log(forward_paths);
-        console.log(cycles);
-        console.log(non_touching_loops);
-        console.log(deltas);
-        renderForward(forward_paths);
-        renderIndividualLoops(cycles);
-        renderNonTouchingLoops(non_touching_loops);
-        document.querySelector("#bigDelta").insertAdjacentHTML("afterbegin",`<p>main Delta: ${bigDelta}</p>` );
-        renderDeltas(deltas);
-       
-        document.querySelector("#finalGain").insertAdjacentHTML("afterbegin",`<p>transfer Gain : ${finalGain}</p>` );
-      }
-      function renderDeltas(deltas) {
-        var counter = 0;
-        const html = deltas
-          .map((delta) => {
-            counter++;
-            return `<p>Delta${counter}: ${delta}</p>`;
-          })
-          .join("");
+      let graph = new Graph();
 
-        document
-          .querySelector("#Deltas")
-          .insertAdjacentHTML("afterbegin", html);
-        }
-    function renderForward(data) {
+      nodes.get().forEach(node => graph.add_node(node.id));
+      console.log(graph);
+
+      edges.get().forEach(edge => graph.add_edge(edge.from, edge.to, edge.label));
+      let [forward_paths, forward_paths_gains, cycles, loopsGains, non_touching_loops, bigDelta, deltas, finalGain] = solve(graph);
+      non_touching_loops.shift() //remove individual loops
+      console.log(forward_paths);
+      console.log(cycles);
+      console.log(non_touching_loops);
+      console.log(deltas);
+      renderForward(forward_paths, forward_paths_gains);
+      renderIndividualLoops(cycles, loopsGains);
+      renderNonTouchingLoops(non_touching_loops);
+      document.querySelector("#bigDelta").innerHTML = `<h3>Main Delta = ${bigDelta}</h3>`;
+      renderDeltas(deltas);
+
+      document.querySelector("#finalGain").innerHTML = `<h3 style='margin-bottom: 100px;'>Transfer Gain = ${finalGain}</h3>`;
+    }
+    function renderDeltas(deltas) {
       var counter = 0;
-      const html = data
-        .map((node) => {
-          var holder = "";
-          for (let i = 0; i < node.length; i++) {
-            holder = holder.concat(node[i]);
-          }
+      const html = `<h1 class='display-1'>Deltas</h1>` + deltas
+        .map((delta) => {
           counter++;
-          return `<p>forward Path${counter}: ${holder}</p>`;
+          return `<p><strong>Delta ${counter}:</strong> ${delta}</p>`;
         })
         .join("");
 
       document
-        .querySelector("#forwardPath")
-        .insertAdjacentHTML("afterbegin", html);
+        .querySelector("#Deltas")
+        .innerHTML = html;
     }
-    function renderIndividualLoops(data) {
-      var counter = 0;
-      const html = data
-        .map((node) => {
-          var holder = "";
-          for (let i = 0; i < node.length; i++) {
-            holder = holder.concat(node[i]);
-          }
-          loopsInString.push(holder);
-          counter++;
-          return `<p>loop ${counter}: ${holder}</p>`;
+    function renderForward(data, forward_paths_gains) {
+      const html = `<h1 class='display-1'>Forward Paths</h1>` +  data
+        .map((node, counter) => `<p><h3>forward Path ${counter}:</h3> ${node.join('->')}, <strong>Gain: ${forward_paths_gains[counter]}</strong></p>`)
+        .join("");
+
+      document
+        .querySelector("#forwardPath")
+        .innerHTML =  html;
+    }
+    function renderIndividualLoops(data, loopsGains) {
+      const html = `<h1 class='display-1'>Loops</h1>` + data
+        .map((node, counter) => {
+          loopsInString.push(node.join('->'));
+          return `<p><h3>loop ${counter}:</h3> ${node.join('->')}, <strong>Gain: ${loopsGains[counter]}</strong></p>`;
         })
         .join("");
 
       document
         .querySelector("#individual")
-        .insertAdjacentHTML("afterbegin", html);
+        .innerHTML = html;
     }
     function renderNonTouchingLoops(loopgroups) {
-      var counter = 0;
-      const html = loopgroups
-        .map((group) => {
-          var holder = "";
-          for (let i = 0; i < group.length; i++) {
-            holder = holder.concat(loopsInString[group[i]] + ",");
-          }
-          counter++;
-          return `<p>non touching loop ${counter}: ${holder}</p>`;
-        })
-        .join("");
-
+      
+      const html = `<h1 class='display-1'>Non Touching Loops</h1>` + 
+                    `<p><strong>` + loopgroups.map(container => {
+                      let group_str = container.map(group => {
+                        return '(' + group.loops.map(l => 'loop ' + l.toString()).join(', ') + ')';
+                      }).join(' - ');
+                      return group_str;
+                    }).join('<br>') + `</strong></p>`;
       document
         .querySelector("#nonTouching")
-        .insertAdjacentHTML("afterbegin", html);
+        .innerHTML = html;
     }
+
+
   </script>
+
 </body>
 
 </html>

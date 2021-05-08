@@ -24,7 +24,7 @@ class Graph {
     }
 
     add_edge(from, to, weight) {
-        this.adj_list[from].push(new Edge(to, weight));
+        this.adj_list[from].push(new Edge(to, '(' + weight + ')'));
     }
 
     edit_edge(from, to, weight){
