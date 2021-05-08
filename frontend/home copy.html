@@ -125,18 +125,12 @@
       { from: 5, to: 4, label: '2' },
       { from: 5, to: 5, label: '-1' }]);
   
-<<<<<<< HEAD
  /*
     let nodes = new vis.DataSet([]);
     let edges = new vis.DataSet([]);
     let nodes_counter = 0;
 */
 
-=======
-    /*let nodes = new vis.DataSet([]);
-    let edges = new vis.DataSet([]);
-    let nodes_counter = 0;*/
->>>>>>> dacb23c8a0059cc34af0de123a52895a972e7592
     // create a network
     let container = document.getElementById('mynetwork');
 
@@ -225,23 +219,23 @@
       renderForward(forward_paths, forward_paths_gains);
       renderIndividualLoops(cycles, loopsGains);
       renderNonTouchingLoops(non_touching_loops);
-      document.querySelector("#bigDelta").insertAdjacentHTML("afterbegin", `<p>main Delta: ${bigDelta}</p>`);
+      document.querySelector("#bigDelta").innerHTML = `<h1 class='display-1'>Main Delta = ${bigDelta}</h1>`;
       renderDeltas(deltas);
 
-      document.querySelector("#finalGain").insertAdjacentHTML("afterbegin", `<p>transfer Gain : ${finalGain}</p>`);
+      document.querySelector("#finalGain").innerHTML = `<h1 style='margin-bottom: 100px;'><strong>Transfer Gain</strong> = ${finalGain}</h1>`;
     }
     function renderDeltas(deltas) {
       var counter = 0;
-      const html = deltas
+      const html = `<h1 class='display-1'>Deltas</h1>` + deltas
         .map((delta) => {
           counter++;
-          return `<p>Delta${counter}: ${delta}</p>`;
+          return `<p><strong>Delta${counter}:</strong> ${delta}</p>`;
         })
         .join("");
 
       document
         .querySelector("#Deltas")
-        .insertAdjacentHTML("afterbegin", html);
+        .innerHTML = html;
     }
     function renderForward(data, forward_paths_gains) {
       const html = `<h1 class='display-1'>Forward Paths</h1>` +  data
@@ -250,7 +244,7 @@
 
       document
         .querySelector("#forwardPath")
-        .insertAdjacentHTML("afterbegin", html);
+        .innerHTML =  html;
     }
     function renderIndividualLoops(data, loopsGains) {
       const html = `<h1 class='display-1'>Loops</h1>` + data
@@ -262,30 +256,20 @@
 
       document
         .querySelector("#individual")
-        .insertAdjacentHTML("afterbegin", html);
+        .innerHTML = html;
     }
     function renderNonTouchingLoops(loopgroups) {
-      var counter = 0;
-      const html = loopgroups
-        .map((group) => {
-          var holder = "";
-          for (let i = 0; i < group.length; i++) {
-            console.log(group[i]);
-            for (let j = 0; j < group[i].loops.length; j++) {
-              if(j==group[i].loops.length-1)
-              holder = holder.concat("loop"+group[i].loops[j] + " /<br>");
-              else 
-              holder = holder.concat("loop"+group[i].loops[j] + " ->");
-            }
-          }
-          counter++;
-          return `<p>non touching loop ${counter}: ${holder}</p>`;
-        })
-        .join("");
-
+      
+      const html = `<h1 class='display-1'>Non Touching Loops</h1>` + 
+                    `<p><strong>` + loopgroups.map(container => {
+                      let group_str = container.map(group => {
+                        return '(' + group.loops.map(l => 'loop ' + l.toString()).join(', ') + ')';
+                      }).join(' - ');
+                      return group_str;
+                    }).join('<br>') + `</strong></p>`;
       document
         .querySelector("#nonTouching")
-        .insertAdjacentHTML("afterbegin", html);
+        .innerHTML = html;
     }
 
 
