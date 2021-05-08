@@ -98,7 +98,7 @@
     </div>
   </div>
   <script>
-    /*
+    
     let nodes = new vis.DataSet([
       { id: 0, label: '0' },
       { id: 1, label: '1' },
@@ -124,10 +124,10 @@
       { from: 4, to: 1, label: '-1' },
       { from: 5, to: 4, label: '2' },
       { from: 5, to: 5, label: '-1' }]);
-  */
-    let nodes = new vis.DataSet([]);
+  
+    /*let nodes = new vis.DataSet([]);
     let edges = new vis.DataSet([]);
-    let nodes_counter = 0;
+    let nodes_counter = 0;*/
     // create a network
     let container = document.getElementById('mynetwork');
 
@@ -282,9 +282,9 @@
             console.log(group[i]);
             for (let j = 0; j < group[i].loops.length; j++) {
               if(j==group[i].loops.length-1)
-              holder = holder.concat(loopsInString[group[i].loops[j]] + " /<br>");
+              holder = holder.concat("loop"+group[i].loops[j] + " /<br>");
               else 
-              holder = holder.concat(loopsInString[group[i].loops[j]] + " ->");
+              holder = holder.concat("loop"+group[i].loops[j] + " ->");
             }
           }
           counter++;
