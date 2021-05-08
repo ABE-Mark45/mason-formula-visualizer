@@ -1,295 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0"
-      crossorigin="anonymous"
-    />
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Mason Formula Solver</title>
-    <style>
-      form {
-        padding: 20px;
-      }
-    </style>
-    <script type="text/javascript" src="math.min.js"></script>
-    <script type="text/javascript" src="index.js"></script>
-    <script type="text/javascript" src="./graph.js"></script>
-    <script
-      type="text/javascript"
-      src="https://visjs.github.io/vis-network/standalone/umd/vis-network.min.js"
-    ></script>
-  </head>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous" />
 
-  <body>
-    <nav class="navbar navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">Mason Formula Solver</a>
-      </div>
-    </nav>
-    <div class="container">
-      <!-- Inputs-->
-      <div class="my-3 row align-items-center justify-content-center">
-      
-          <!-- Add node -->
-          <div class="col-1">
-            <button type="button" class="btn btn-primary w-100" onclick="addNode()">
-              Add Node
-            </button>
-          </div>
+  <title>Mason Formula Solver</title>
+  <style>
+    form {
+      padding: 20px;
+    }
+  </style>
+  <script type="text/javascript" src="math.min.js"></script>
+  <script type="text/javascript" src="index.js"></script>
+  <script type="text/javascript" src="./graph.js"></script>
+  <script type="text/javascript" src="https://visjs.github.io/vis-network/standalone/umd/vis-network.min.js"></script>
+</head>
 
-          <!-- Add Edge -->
-          <form
-            class="col-4 border border-2 border-success rounded"
-          >
-            <div class="input-group">
-              <input
-                type="text"
-                class="form-control"
-                id="edgeFrom"
-                placeholder="edge from"
-              />
-              <input
-                type="text"
-                class="form-control"
-                id="edgeTo"
-                placeholder="edge to"
-              />
-              <input
-                type="text"
-                class="form-control"
-                id="value"
-                placeholder="edge value"
-              />
-              <button type="button" class="btn btn-primary" onclick="addEdge()">
-                Add Edge
-              </button>
-            </div>
-          </form>
+<body>
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Mason Formula Solver</a>
+    </div>
+  </nav>
+  <div class="container-fluid">
+    <!-- Inputs-->
+    <div class="mx-auto my-3 row align-items-center justify-content-center" style="width: 90%;">
 
-          <!-- Delete Node -->
-          <form
-            class="col-3 border border-2 border-danger rounded"
-          >
-            <div class="input-group">
-              <input
-                type="text"
-                class="form-control"
-                id="nodeToDelete"
-                placeholder="node to delete"
-              />
-              <button
-                type="button"
-                class="btn btn-primary"
-                onclick="deleteNode()"
-              >
-                Delete Node
-              </button>
-            </div>
-          </form>
-
-          <!-- Delete Edge -->
-          <form
-            class="col-4  border border-2 border-danger rounded"
-          >
-            <div class="input-group">
-              <input
-                type="text"
-                class="form-control"
-                id="edgeDeleteFrom"
-                placeholder="edge from"
-              />
-              <input
-                type="text"
-                class="form-control"
-                id="edgeDeleteTo"
-                placeholder="edge to"
-              />
-              <button
-                type="button"
-                class="btn btn-primary"
-                onclick="deleteEdge()"
-              >
-                Delete Edge
-              </button>
-            </div>
-          </form>
-
-          
-        
-      </div>
-
-      <!-- Canvas -->
-      <div class="row">
-        <div id="mynetwork" class="my-3 border border-dark rounded" style="height:400px;"></div>
-      </div>
-
-      <!-- Solve -->
-      <div class="row mx-auto w-25">
-        <button type="button" class="btn btn-primary" onclick="solveFlow()">
-          Solve
+      <!-- Add node -->
+      <div class="col-1">
+        <button type="button" class="btn btn-primary w-100" onclick="addNode()">
+          Add Node
         </button>
       </div>
 
-      <br />
-      <div class="container" style="text-align: left" id="solution">
-        <div class="container" style="text-align: left" id="forwardPath"></div>
-        <div class="container" style="text-align: center" id="individual"></div>
-        <div class="container" style="text-align: right" id="nonTouching"></div>
-      </div>
+      <!-- Add/Edit Edge -->
+      <form class="col-5 border border-2 border-success rounded">
+        <div class="input-group">
+          <input type="text" class="form-control" id="edgeFrom" placeholder="From" />
+          <input type="text" class="form-control" id="edgeTo" placeholder="To" />
+          <input type="text" class="form-control" id="value" placeholder="Weight" />
+          <button type="button" class="btn btn-primary" onclick="addEdge()">
+            Add/Edit Edge
+          </button>
+        </div>
+      </form>
+
+      <!-- Delete Node -->
+      <form class="col-2 border border-2 border-danger rounded">
+        <div class="input-group">
+          <input type="text" class="form-control" id="nodeToDelete" placeholder="Node" />
+          <button type="button" class="btn btn-primary" onclick="deleteNode()">
+            Delete Node
+          </button>
+        </div>
+      </form>
+
+      <!-- Delete Edge -->
+      <form class="col-4  border border-2 border-danger rounded">
+        <div class="input-group">
+          <input type="text" class="form-control" id="edgeDeleteFrom" placeholder="From" />
+          <input type="text" class="form-control" id="edgeDeleteTo" placeholder="To" />
+          <button type="button" class="btn btn-primary" onclick="deleteEdge()">
+            Delete Edge
+          </button>
+        </div>
+      </form>
+
+
+
     </div>
-    <script>
-      // var dot="'digraph {node[shape=circle] ';+' ahs -> box[label="box", arrowhead=box]; \n'}";
-      var dot = "digraph {}";
+
+    <!-- Canvas -->
+    <div class="row mx-auto" style="width: 90%;">
+      <div id="mynetwork" class="my-3 border border-dark rounded" style="height:400px;"></div>
+    </div>
+
+    <!-- Solve -->
+    <div class="row mx-auto w-25">
+      <button type="button" class="btn btn-primary" onclick="solveFlow()">
+        Solve
+      </button>
+    </div>
+
+    <br />
+    <div class="container" style="text-align: left" id="solution">
+      <div class="container" style="text-align: left" id="forwardPath"></div>
+      <div class="container" style="text-align: center" id="individual"></div>
+      <div class="container" style="text-align: right" id="nonTouching"></div>
+    </div>
+  </div>
+  <script>
+    // var dot="'digraph {node[shape=circle] ';+' ahs -> box[label="box", arrowhead=box]; \n'}";
+    var dot = "digraph {}";
+    var container = document.getElementById("mynetwork");
+    var data = vis.parseDOTNetwork(dot);
+    var network = new vis.Network(container, data);
+    var data = [[]];
+    var counter = 0;
+    methods = new Method();
+    graph = new Graph();
+    var loopsInString = [];
+
+    function addEdge() {
+      var from = parseInt(document.getElementById("edgeFrom").value);
+      var to = parseInt(document.getElementById("edgeTo").value);
+      var value = document.getElementById("value").value;
+
+      if (!methods.validNodes([from, to])) {
+        alert("Invalid Node(s)");
+        return;
+      }
+
+      if (!methods.edgeExists(graph, from, to))
+        graph.add_edge(from, to, value);
+      else
+        graph.edit_edge(from, to, value);
+
+
+      draw();
+
+    }
+
+    function deleteEdge() {
+      var from = parseInt(document.getElementById("edgeDeleteFrom").value);
+      var to = parseInt(document.getElementById("edgeDeleteTo").value);
+
+      if (!methods.validNodes([from, to])) {
+        alert("Invalid Node(s)");
+        return;
+      }
+
+      graph.remove_edge(from, To);
+      draw();
+    }
+    function deleteNode() {
+      var node = parseInt(document.getElementById("nodeToDelete").value);
+
+      if (!methods.validNodes([node])) {
+        alert("Invalid Node(s)");
+        return;
+      }
+
+      graph.remove_node(node);
+      draw();
+    }
+    function addNode() {
+      graph.add_node(counter);
+      counter++;
+      draw();
+    }
+    function draw() {
+      dotElement = methods.renderDot(graph);
       var container = document.getElementById("mynetwork");
-      var data = vis.parseDOTNetwork(dot);
+      var data = vis.parseDOTNetwork(dotElement);
       var network = new vis.Network(container, data);
-      var data = [[]];
+      var options = {
+        physics: {
+          enabled: false
+        }
+      }
+      network.setOptions(options);
+    }
+    function solveFlow() {
+      /*
+      //call solving fn here
+      var data1 = [[1, 2, 3, 4, 5, 6, 7, 8]
+        , [1, 2, 3, 4, 5, 6, 8]
+        , [1, 2, 3, 4, 7, 8]];
+      var data = [[5, 6, 5]
+        , [6, 7, 8, 6]
+        , [2, 3, 4, 5, 6, 7, 8, 2]
+        , [3, 4, 5, 6, 7, 3]
+        , [6, 8, 6]
+        , [2, 3, 4, 5, 6, 8, 2]
+        , [2, 3, 4, 7, 8, 2]
+        , [3, 4, 7, 3]];
+      var loopgroups = [[0, 6], [0, 7], [4, 7]]
+      */
+      //remove the comment tag in production
+      //data[2].shift() //remove individual loops
+      let [forward_paths, cycles, non_touching_loops, deltas] = solve(graph);
+
+      console.log(forward_paths);
+      console.log(cycles);
+      console.log(non_touching_loops);
+      console.log(deltas);
+      renderForward(data1);
+      renderIndividualLoops(data);
+      renderNonTouchingLoops(loopgroups);
+      console.log(data1);
+    }
+    function renderForward(data) {
       var counter = 0;
-      methods = new Method();
-      graph = new Graph();
-      var loopsInString = [];
+      const html = data
+        .map((node) => {
+          var holder = "";
+          for (let i = 0; i < node.length; i++) {
+            holder = holder.concat(node[i]);
+          }
+          counter++;
+          return `<p>forward Path${counter}: ${holder}</p>`;
+        })
+        .join("");
 
-      function addEdge() {
-        var from = parseInt(document.getElementById("edgeFrom").value);
-        var to = parseInt(document.getElementById("edgeTo").value);
-        var value = document.getElementById("value").value;
+      document
+        .querySelector("#forwardPath")
+        .insertAdjacentHTML("afterbegin", html);
+    }
+    function renderIndividualLoops(data) {
+      var counter = 0;
+      const html = data
+        .map((node) => {
+          var holder = "";
+          for (let i = 0; i < node.length; i++) {
+            holder = holder.concat(node[i]);
+          }
+          loopsInString.push(holder);
+          counter++;
+          return `<p>loop ${counter}: ${holder}</p>`;
+        })
+        .join("");
 
-        if (!methods.validNodes([from, to])) {
-          alert("Invalid Node(s)");
-          return;
-        }
+      document
+        .querySelector("#individual")
+        .insertAdjacentHTML("afterbegin", html);
+    }
+    function renderNonTouchingLoops(loopgroups) {
+      var counter = 0;
+      const html = loopgroups
+        .map((group) => {
+          var holder = "";
+          for (let i = 0; i < group.length; i++) {
+            holder = holder.concat(loopsInString[group[i]] + ",");
+          }
+          counter++;
+          return `<p>non touching loop ${counter}: ${holder}</p>`;
+        })
+        .join("");
 
-        if (!methods.edgeExists(graph, from, to)) {
-          graph.add_edge(from, to, value);
-          draw();
-        } else {
-          alert("Edge already exists");
-        }
-      }
+      document
+        .querySelector("#nonTouching")
+        .insertAdjacentHTML("afterbegin", html);
+    }
+  </script>
+</body>
 
-      function deleteEdge() {
-        var from = parseInt(document.getElementById("edgeDeleteFrom").value);
-        var to = parseInt(document.getElementById("edgeDeleteTo").value);
-
-        if (!methods.validNodes([from, to])) {
-          alert("Invalid Node(s)");
-          return;
-        }
-
-        graph.remove_edge(from, To);
-        draw();
-      }
-      function deleteNode() {
-        var node = parseInt(document.getElementById("nodeToDelete").value);
-
-        if (!methods.validNodes([node])) {
-          alert("Invalid Node(s)");
-          return;
-        }
-
-        graph.remove_node(node);
-        draw();
-      }
-      function addNode() {
-        graph.add_node(counter);
-        counter++;
-        draw();
-      }
-      function draw() {
-        dotElement = methods.renderDot(graph);
-        var container = document.getElementById("mynetwork");
-        var data = vis.parseDOTNetwork(dotElement);
-        var network = new vis.Network(container, data);
-      }
-      function solveFlow() {
-        /*
-        //call solving fn here
-        var data1 = [[1, 2, 3, 4, 5, 6, 7, 8]
-          , [1, 2, 3, 4, 5, 6, 8]
-          , [1, 2, 3, 4, 7, 8]];
-        var data = [[5, 6, 5]
-          , [6, 7, 8, 6]
-          , [2, 3, 4, 5, 6, 7, 8, 2]
-          , [3, 4, 5, 6, 7, 3]
-          , [6, 8, 6]
-          , [2, 3, 4, 5, 6, 8, 2]
-          , [2, 3, 4, 7, 8, 2]
-          , [3, 4, 7, 3]];
-        var loopgroups = [[0, 6], [0, 7], [4, 7]]
-        */
-        //remove the comment tag in production
-        //data[2].shift() //remove individual loops
-        let [forward_paths, cycles, non_touching_loops, deltas] = solve(graph);
-
-        console.log(forward_paths);
-        console.log(cycles);
-        console.log(non_touching_loops);
-        console.log(deltas);
-        renderForward(data1);
-        renderIndividualLoops(data);
-        renderNonTouchingLoops(loopgroups);
-        console.log(data1);
-      }
-      function renderForward(data) {
-        var counter = 0;
-        const html = data
-          .map((node) => {
-            var holder = "";
-            for (let i = 0; i < node.length; i++) {
-              holder = holder.concat(node[i]);
-            }
-            counter++;
-            return `<p>forward Path${counter}: ${holder}</p>`;
-          })
-          .join("");
-
-        document
-          .querySelector("#forwardPath")
-          .insertAdjacentHTML("afterbegin", html);
-      }
-      function renderIndividualLoops(data) {
-        var counter = 0;
-        const html = data
-          .map((node) => {
-            var holder = "";
-            for (let i = 0; i < node.length; i++) {
-              holder = holder.concat(node[i]);
-            }
-            loopsInString.push(holder);
-            counter++;
-            return `<p>loop ${counter}: ${holder}</p>`;
-          })
-          .join("");
-
-        document
-          .querySelector("#individual")
-          .insertAdjacentHTML("afterbegin", html);
-      }
-      function renderNonTouchingLoops(loopgroups) {
-        var counter = 0;
-        const html = loopgroups
-          .map((group) => {
-            var holder = "";
-            for (let i = 0; i < group.length; i++) {
-              holder = holder.concat(loopsInString[group[i]] + ",");
-            }
-            counter++;
-            return `<p>non touching loop ${counter}: ${holder}</p>`;
-          })
-          .join("");
-
-        document
-          .querySelector("#nonTouching")
-          .insertAdjacentHTML("afterbegin", html);
-      }
-    </script>
-  </body>
 </html>

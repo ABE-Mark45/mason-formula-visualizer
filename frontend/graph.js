@@ -27,6 +27,15 @@ class Graph {
         this.adj_list[from].push(new Edge(to, weight));
     }
 
+    edit_edge(from, to, weight){
+        let edges = this.adj_list[from]
+        for (let i = 0;i < edges.length;i++){
+            let edge = edges[i];
+            if (edge.to == to)
+                edge.weight = weight;
+        }
+    }
+
 
 
     remove_node(removedNode) {
