@@ -1,9 +1,16 @@
+/*
+class to hold edge information
+*/
 class Edge {
     constructor(to, weight) {
         this.to = to;
         this.weight = weight;
     }
 }
+
+/*
+class to hold graph infromation in an adjacency list format
+*/
 
 class Graph {
     constructor() {
@@ -35,6 +42,9 @@ class Graph {
 }
 
 
+/*
+the function rearranges the loop to start from the node with the least index
+*/
 function sort_cycle(cycle) {
     let min = cycle[0], min_i = 0;
 
@@ -56,6 +66,9 @@ function sort_cycle(cycle) {
     return sorted_cycle;
 }
 
+/*
+array equality check by value
+*/
 function is_array_equal(a, b) {
     if (a.length != b.length)
         return false;
@@ -68,7 +81,8 @@ function is_array_equal(a, b) {
 
 
 /*
-Generate loops in a graph
+helper function to generate_cycles wrapper function.
+The function initiates a dfs seatch and stores all the cycles in the cycles object
 @{param} g: Graph
 */
 function dfs_generate_loop(g, visited, stack, cycles, from) {
@@ -109,18 +123,13 @@ function dfs_generate_loop(g, visited, stack, cycles, from) {
 
     g.adj_list[from].forEach(edge => dfs_generate_loop(g, visited, stack, cycles, edge.to));
 
-    /*
-    for(let edge in g.adj_list[from]) {
-        console.log('edge: ', edge);
-        dfs_generate_loop(g, visited, stack, cycles, edge.to);
-    }
-    */
-
     visited[from] = false;
     stack.pop();
 }
 
-
+/*
+generates all simple cycles in a graph
+*/
 function generate_cycles(g) {
     let visited = {};
     let stack = [];
@@ -134,21 +143,30 @@ function generate_cycles(g) {
     return cycles;
 }
 
-
+/*
+a class to hold non-touching loops which can be multiplied together
+*/
 class LoopGroup {
     constructor(loop) {
-        this.loops = [loop];
+        this.loops = [loop];    // loops array: holds loops indices in the cycles array
     }
 
     add(loop) {
         this.loops.push(loop);
     }
 
+    /*
+    Generates set representation of all nodes which exist in the loop group for fast search
+    */
     generate_node_set(cycles) {
         return new Set(this.loops.reduce((result, current_loop) =>
             result.concat(cycles[current_loop])
             , []));
     }
+
+    /*
+    creates a deep copy of the loop group object
+    */
 
     clone() {
         let x = new LoopGroup();
@@ -157,7 +175,11 @@ class LoopGroup {
     }
 }
 
-
+/*
+generates a compatibility matrix of all loops.
+The matrix is a symmetric n x n matrix where n is the number of loops.
+matrix[i][j] = true if the loops i and j are non touching, otherwise false
+*/
 function generate_cycles_conflicts(cycles) {
     let cycles_conflicts = new Array(cycles.length).fill(0).map(row => new Array(cycles.length).fill(true));
 
@@ -182,6 +204,26 @@ function generate_cycles_conflicts(cycles) {
     return cycles_conflicts;
 }
 
+
+/*
+generates the non-touching loop groups in a container to calculate the big delta in the denominator.
+If we have, for example, delta = 1 - [L_1 + L_2 + L_3] - [L_1*L_2 + L_2*L_3] + [L_1*L_2*L_3], the return
+array will be
+[
+    [
+        LoopGroup{ loops: [1] },
+        LoopGroup{ loops: [2] },
+        LoopGroup{ loops: [3] }
+    ],
+    [
+        LoopGroup{ loops: [1, 2] },
+        LoopGroup{ loops: [2, 3] }
+    ],
+    [
+        LoopGroup{ loops: [1, 2, 3] }
+    ]
+]
+*/
 function generate_non_touching_cycle_groups(cycles, cycles_conflicts) {
     let non_touching_loops_container = [[]];
 
@@ -219,6 +261,11 @@ function generate_non_touching_cycle_groups(cycles, cycles_conflicts) {
     return non_touching_loops_container;
 }
 
+
+/*
+The function takes in a path (loop, or froward path) and generates an array
+containing all the transfer functions along the way
+*/
 function get_transfer_function(g, path) {
     let transfer_array = [];
 
@@ -230,7 +277,9 @@ function get_transfer_function(g, path) {
 }
 
 
-
+/*
+generates forward paths
+*/
 function generate_forward_paths(g) {
     let nodes = Object.keys(g.adj_list);
     let start_node = parseInt(nodes[0]);
@@ -262,6 +311,33 @@ function generate_forward_paths(g) {
     return forward_paths;
 }
 
+
+/*
+Generates the delta_i for every forward path in this format
+if delta_1 = 1 + [L_1] - [L_1*L_2]
+[
+    ** forward_path 1**
+    [
+        [
+            LoopGroup{ loops: [1] }
+        ],
+        [
+            LoopGroup{ loops: [1, 2]}
+        ]
+    ]
+]
+or if delta_1 = delta_2 = 1, the function returns
+[
+    [
+        []
+    ],
+    [
+        []
+    ]
+]
+
+Please check all entries in each forward path container while alternating signs
+*/
 function generate_deltas(cycles, forward_paths, non_touching_loops) {
     return forward_paths.map(cur_forward_path => 
         non_touching_loops.map(container =>
