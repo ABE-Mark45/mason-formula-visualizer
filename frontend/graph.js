@@ -387,7 +387,7 @@ function get_big_delta(non_touching_loops, loop_gains) {
         let container_gain = container.map(loop_group =>
             loop_group.loops.map(loop_index => loop_gains[loop_index]).join(' * ')
         );
-        ans += container_gain.join(' + ');
+        ans += container_gain.llength ? container_gain.join(' + ') : '0';
         ans += ')';
         console.log('-------');
     });
