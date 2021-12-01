@@ -1,4 +1,3 @@
 ![Language](https://img.shields.io/badge/language-JavaScript%20-yellow.svg)
 # Mason Formula Visualizer
-
-A visualizer.
+Mason's gain formula (MGF) is a method for finding the transfer function of a linear signal-flow graph (SFG). The formula was derived by Samuel Jefferson Mason,[1] whom it is also named after. MGF is an alternate method to finding the transfer function algebraically by labeling each signal, writing down the equation for how that signal depends on other signals, and then solving the multiple equations for the output signal in terms of the input signal. MGF provides a step by step method to obtain the transfer function from a SFG. Often, MGF can be determined by inspection of the SFG. The method can easily handle SFGs with many variables and loops including loops with inner loops. MGF comes up often in the context of control systems and digital filters because control systems and digital filters are often represented by SFGs.
