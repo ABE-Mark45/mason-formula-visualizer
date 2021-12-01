@@ -15,6 +15,18 @@
     form {
       padding: 20px;
     }
+    .btn:hover{
+      background-color: rgb(52, 55, 233);
+    }
+    .solve{
+      background-color: blueviolet;
+    }
+    .solve:hover{
+      background-color: rgb(57, 0, 110);
+    }
+    .container{
+      min-width:980px;
+    }
   </style>
   <script type="text/javascript" src="math.min.js"></script>
   <script type="text/javascript" src="./graph.js"></script>
@@ -24,26 +36,26 @@
 <body>
   <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Mason Formula Solver</a>
+      <a class="navbar-brand py-3" href="#">Mason Formula Solver</a>
     </div>
   </nav>
   <div class="container">
     <!-- Inputs-->
-    <div class="my-3 row align-items-center justify-content-center">
+    <div class="my-4 row align-items-center justify-content-center">
 
       <!-- Add node -->
-      <div class="col-1">
+      <div class="col-3">
         <button type="button" class="btn btn-primary w-100" onclick="addNode()">
           Add Node
         </button>
       </div>
 
       <!-- Add Edge -->
-      <form class="col-4 border border-2 border-success rounded">
+      <form class="col-5 border border-2 border-success rounded">
         <div class="input-group">
-          <input type="text" class="form-control" id="edgeFrom" placeholder="edge from" />
-          <input type="text" class="form-control" id="edgeTo" placeholder="edge to" />
-          <input type="text" class="form-control" id="value" placeholder="edge value" />
+          <input type="text" class="form-control" id="edgeFrom" placeholder="Edge from" />
+          <input type="text" class="form-control" id="edgeTo" placeholder="Edge to" />
+          <input type="text" class="form-control" id="value" placeholder="Edge value" />
           <button type="button" class="btn btn-primary" onclick="addEdge()">
             Add/Edit Edge
           </button>
@@ -51,9 +63,9 @@
       </form>
 
       <!-- Delete Node -->
-      <form class="col-3 border border-2 border-danger rounded">
+      <form class="col-4 border border-2 border-danger rounded">
         <div class="input-group">
-          <input type="text" class="form-control" id="nodeToDelete" placeholder="node to delete" />
+          <input type="text" class="form-control" id="nodeToDelete" placeholder="Node to be deleted" />
           <button type="button" class="btn btn-primary" onclick="deleteNode()">
             Delete Node
           </button>
@@ -61,10 +73,10 @@
       </form>
 
       <!-- Delete Edge -->
-      <form class="col-4  border border-2 border-danger rounded">
+      <form class="col-6  border border-2 border-danger rounded">
         <div class="input-group">
-          <input type="text" class="form-control" id="edgeDeleteFrom" placeholder="edge from" />
-          <input type="text" class="form-control" id="edgeDeleteTo" placeholder="edge to" />
+          <input type="text" class="form-control" id="edgeDeleteFrom" placeholder="Edge from" />
+          <input type="text" class="form-control" id="edgeDeleteTo" placeholder="Edge to" />
           <button type="button" class="btn btn-primary" onclick="deleteEdge()">
             Delete Edge
           </button>
@@ -75,7 +87,7 @@
 
     </div>
     <div class="row">
-      <h3>Last vertex number is the output</h3>
+      <h5>Last vertex number is the output</h5>
     </div>
     <!-- Canvas -->
     <div class="row">
@@ -84,7 +96,7 @@
 
     <!-- Solve -->
     <div class="row mx-auto w-25">
-      <button type="button" class="btn btn-primary" onclick="solveFlow()">
+      <button type="button" class="btn solve btn-primary" onclick="solveFlow()">
         Solve
       </button>
     </div>
@@ -194,7 +206,7 @@
       }
     };
 
-    // initialize your network!
+    // initializing the network!
     var counter = 0;
     var loopsInString = [];
     let network = new vis.Network(container, data, options);
